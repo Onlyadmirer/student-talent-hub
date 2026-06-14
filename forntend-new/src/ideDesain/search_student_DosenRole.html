@@ -1,0 +1,477 @@
+<!-- search_talent.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Talent - Student Talent Hub</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+      :root {
+        --sidebar-bg: #00342b;
+        --primary-btn: #004d40;
+        --bg-color: #f4f7f6;
+        --card-bg: #ffffff;
+        --text-main: #111827;
+        --text-muted: #64748b;
+        --tag-bg: #e0f2f1;
+        --tag-text: #00695c;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+        color: var(--text-main);
+      }
+
+      /* SIDEBAR */
+      .sidebar-container {
+        width: 260px;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--sidebar-bg);
+        flex-shrink: 0;
+      }
+
+      .logo-area {
+        height: 80px;
+        background-color: #ebf2f0;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        color: #00342b;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .sidebar-menu {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .sidebar-item-title {
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 2px;
+      }
+
+      .sidebar-item-subtitle {
+        color: #88a49e;
+        font-size: 13px;
+        margin-bottom: 24px;
+      }
+
+      .sidebar-search-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background-color: #00493d;
+        color: #ffffff;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      /* MAIN CONTENT */
+      .main-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* NAVBAR */
+      .navbar {
+        height: 80px;
+        background-color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+      }
+
+      .search-bar {
+        position: relative;
+        width: 400px;
+      }
+
+      .search-bar i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 20px;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 12px 16px 12px 48px;
+        background-color: #f1f5f9;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      .search-bar input::placeholder {
+        color: #94a3b8;
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .nav-icon {
+        font-size: 24px;
+        color: #475569;
+        cursor: pointer;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      /* CONTENT AREA */
+      .content-area {
+        flex: 1;
+        padding: 40px;
+        overflow-y: auto;
+      }
+
+      .page-header {
+        margin-bottom: 32px;
+      }
+
+      .page-title {
+        font-size: 28px;
+        color: #00342b;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .page-subtitle {
+        font-size: 15px;
+        color: #475569;
+      }
+
+      .layout-grid {
+        display: flex;
+        gap: 32px;
+        align-items: flex-start;
+      }
+
+      /* FILTER PANEL */
+      .filter-panel {
+        width: 260px;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        flex-shrink: 0;
+      }
+
+      .filter-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #00342b;
+        margin-bottom: 24px;
+        letter-spacing: 0.5px;
+      }
+
+      .filter-group {
+        margin-bottom: 20px;
+      }
+
+      .filter-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .filter-select {
+        width: 100%;
+        padding: 12px 16px;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #111827;
+        appearance: none;
+        outline: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        cursor: pointer;
+      }
+
+      .btn-apply {
+        width: 100%;
+        padding: 14px;
+        background-color: var(--primary-btn);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      /* STUDENT CARDS */
+      .cards-grid {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
+      }
+
+      .student-card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 32px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      }
+
+      .student-avatar {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 16px;
+        border: 3px solid #f1f5f9;
+      }
+
+      .student-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: #00342b;
+        margin-bottom: 4px;
+      }
+
+      .student-major {
+        font-size: 14px;
+        color: #475569;
+        margin-bottom: 20px;
+      }
+
+      .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 28px;
+      }
+
+      .tag {
+        background-color: var(--tag-bg);
+        color: var(--tag-text);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .btn-view {
+        width: 100%;
+        padding: 12px;
+        background-color: var(--primary-btn);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .btn-view:hover,
+      .btn-apply:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar-container">
+      <div class="logo-area">Student Talent Hub</div>
+      <div class="sidebar-menu">
+        <div style="margin-bottom: 24px">
+          <div class="sidebar-item-title">Project Hub</div>
+          <div class="sidebar-item-subtitle">Management Portal</div>
+        </div>
+
+        <div class="sidebar-search-btn">
+          <i class="ph ph-magnifying-glass" style="font-size: 18px"></i>
+          Search Talent
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-wrapper">
+      <!-- TOP NAVBAR -->
+      <header class="navbar">
+        <div class="search-bar">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="text" placeholder="Search..." />
+        </div>
+        <div class="nav-actions">
+          <i class="ph ph-bell nav-icon"></i>
+          <i class="ph ph-gear nav-icon"></i>
+          <img
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            alt="User"
+            class="avatar"
+          />
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT -->
+      <div class="content-area">
+        <div class="page-header">
+          <h1 class="page-title">Search Top Student Talent</h1>
+          <p class="page-subtitle">
+            Connecting ambitious students with professional excellence.
+          </p>
+        </div>
+
+        <div class="layout-grid">
+          <!-- FILTER PANEL -->
+          <div class="filter-panel">
+            <div class="filter-title">FILTER PANEL</div>
+
+            <div class="filter-group">
+              <label class="filter-label">Skill Category</label>
+              <select class="filter-select">
+                <option>All Categories</option>
+                <option>Design</option>
+                <option>Development</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Specific Skill</label>
+              <select class="filter-select">
+                <option>Any Skill</option>
+                <option>React</option>
+                <option>Python</option>
+              </select>
+            </div>
+
+            <div class="filter-group" style="margin-bottom: 32px">
+              <label class="filter-label">Major</label>
+              <select class="filter-select">
+                <option>All Majors</option>
+                <option>Computer Science</option>
+                <option>Design</option>
+              </select>
+            </div>
+
+            <button class="btn-apply">Apply Filters</button>
+          </div>
+
+          <!-- CARDS GRID -->
+          <div class="cards-grid">
+            <!-- Card 1 -->
+            <div class="student-card">
+              <img
+                src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2.5&w=256&h=256&q=80"
+                alt="Sarah"
+                class="student-avatar"
+              />
+              <div class="student-name">Sarah Miller</div>
+              <div class="student-major">Graphic Design</div>
+              <div class="tags-container">
+                <span class="tag">Figma</span>
+                <span class="tag">Typography</span>
+                <span class="tag">Brand Identity</span>
+              </div>
+              <button class="btn-view">View Portfolio</button>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="student-card">
+              <img
+                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt="Alex"
+                class="student-avatar"
+              />
+              <div class="student-name">Alex Rivera</div>
+              <div class="student-major">Computer Science</div>
+              <div class="tags-container">
+                <span class="tag">React</span>
+                <span class="tag">Node.js</span>
+                <span class="tag">PostgreSQL</span>
+              </div>
+              <button class="btn-view">View Portfolio</button>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="student-card">
+              <img
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt="Mark"
+                class="student-avatar"
+              />
+              <div class="student-name">Mark Liang</div>
+              <div class="student-major">Finance & Math</div>
+              <div class="tags-container">
+                <span class="tag">Python</span>
+                <span class="tag">FinTech</span>
+                <span class="tag">Data Viz</span>
+              </div>
+              <button class="btn-view">View Portfolio</button>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="student-card">
+              <img
+                src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2.5&w=256&h=256&q=80"
+                alt="Emily"
+                class="student-avatar"
+              />
+              <div class="student-name">Emily Chen</div>
+              <div class="student-major">Data Science</div>
+              <div class="tags-container">
+                <span class="tag">Machine Learning</span>
+                <span class="tag">SQL</span>
+                <span class="tag">R</span>
+              </div>
+              <button class="btn-view">View Portfolio</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

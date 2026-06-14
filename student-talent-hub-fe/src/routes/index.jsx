@@ -1,7 +1,13 @@
 import { createBrowserRouter } from "react-router";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import About from "../pages/About";
+import Dashboard from "../pages/Dashboard";
+import EditProfile from "../pages/EditProfile";
 import Home from "../pages/Home";
+import MyProjects from "../pages/MyProjects";
+import Profile from "../pages/Profile";
+import ProjectDetail from "../pages/ProjectDetail";
+import UploadProject from "../pages/UploadProject";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 
@@ -29,11 +35,27 @@ export const router = createBrowserRouter([
       // Placeholders for routes referenced in the layout sidebar
       {
         path: "dashboard",
-        element: <div className="p-4 bg-white rounded-lg shadow">Dashboard Overview</div>,
+        element: <Dashboard />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+      {
+        path: "profile/edit",
+        element: <EditProfile />,
       },
       {
         path: "projects",
-        element: <div className="p-4 bg-white rounded-lg shadow">Projects Hub</div>,
+        element: <MyProjects />,
+      },
+      {
+        path: "projects/new",
+        element: <UploadProject />,
+      },
+      {
+        path: "projects/:id",
+        element: <ProjectDetail />,
       },
       {
         path: "collaborators",

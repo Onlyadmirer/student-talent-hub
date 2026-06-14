@@ -1,5 +1,10 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+
+class UserSkillBrief(BaseModel):
+    skill_id: int
+    skill_name: str
+    proficiency_level: str
 
 class UserCreate(BaseModel):
     email: str
@@ -7,6 +12,12 @@ class UserCreate(BaseModel):
     nim: Optional[str] = None
     name: str
     role: str = "student"
+    major: Optional[str] = None
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    nim: Optional[str] = None
+    major: Optional[str] = None
 
 class UserResponse(BaseModel):
     id: int
@@ -15,9 +26,13 @@ class UserResponse(BaseModel):
     name: str
     role: str
     status: str
+    major: Optional[str]
     
     class Config: 
         from_attributes = True
+
+class UserListResponse(UserResponse):
+    skills: List[UserSkillBrief] = []
 
 class Token(BaseModel):
     access_token: str

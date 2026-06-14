@@ -20,3 +20,11 @@ async def create_endorsement(db: AsyncSession, endorse: EndorsementCreate, from_
 async def get_endorsements_by_user(db: AsyncSession, user_id: int) -> List[Endorsement]:
     result = await db.execute(select(Endorsement).where(Endorsement.to_user_id == user_id))
     return list(result.scalars().all())
+
+async def get_endorsements_by_project(db: AsyncSession, project_id: int) -> List[Endorsement]:
+    result = await db.execute(select(Endorsement).where(Endorsement.project_id == project_id))
+    return list(result.scalars().all())
+
+async def get_all_endorsements(db: AsyncSession) -> List[Endorsement]:
+    result = await db.execute(select(Endorsement))
+    return list(result.scalars().all())

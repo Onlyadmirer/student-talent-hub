@@ -10,7 +10,9 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     nim = Column(String, unique=True, index=True, nullable=True)
     name = Column(String, index=True)
+    major = Column(String, nullable=True)
     role = Column(String, default="student")
     status = Column(String, default="active")
 
     projects = relationship("Project", back_populates="owner")
+    skills = relationship("UserSkill", backref="user")

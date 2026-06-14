@@ -19,7 +19,7 @@ export const loginUser = async (email, password) => {
       const errorData = await response.json();
       errorMessage = errorData.detail || errorMessage;
     } catch {
-      // Fallback if response is not JSON
+      // Fallback if response is not <JSON></JSON>
     }
     throw new Error(errorMessage);
   }

@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Text
+from sqlalchemy.orm import relationship
 from app.db.database import Base
 
 class SkillCategory(Base):
@@ -15,3 +16,5 @@ class UserSkill(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     skill_id = Column(Integer, ForeignKey("skill_categories.id"))
     proficiency_level = Column(String)
+
+    skill = relationship("SkillCategory")

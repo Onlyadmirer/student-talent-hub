@@ -30,3 +30,9 @@ class UserSkillResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserSkillUpdate(BaseModel):
+    proficiency_level: str
+
+class UserSkillWithCategoryResponse(UserSkillResponse):
+    skill_name: str = ""

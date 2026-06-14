@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 
 from app.api.dependencies import get_db, get_current_user
-from app.schemas.project import ProjectCreate, ProjectResponse, ProjectDetailResponse, ContributorCreate, ContributorResponse
+from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse, ProjectDetailResponse, ContributorCreate, ContributorResponse
 from app.crud import crud_project
 from app.models.user import User
 
@@ -27,6 +27,13 @@ async def read_projects(
 ):
     return await crud_project.get_projects(db=db, is_open=is_open)
 
+@router.get("/me", response_model=List[ProjectResponse])
+async def read_my_projects(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return await crud_project.get_user_projects(db, owner_id=current_user.id)
+
 @router.get("/{project_id}", response_model=ProjectDetailResponse)
 async def read_project_detail(
     project_id: int,
@@ -36,6 +43,39 @@ async def read_project_detail(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
     return project
+
+@router.patch("/{project_id}", response_model=ProjectResponse)
+async def update_project(
+    project_id: int,
+    update_data: ProjectUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    project = await crud_project.get_project_by_id(db=db, project_id=project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    if project.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the project owner can update this project")
+
+    filtered = update_data.model_dump(exclude_unset=True)
+    if not filtered:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
+    return await crud_project.update_project(db=db, project=project, update_data=filtered)
+
+@router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_project(
+    project_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    project = await crud_project.get_project_by_id(db=db, project_id=project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    if project.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the project owner can delete this project")
+
+    await crud_project.delete_project(db=db, project=project)
 
 @router.post("/{project_id}/contributors", response_model=ContributorResponse, status_code=status.HTTP_201_CREATED)
 async def add_contributor(

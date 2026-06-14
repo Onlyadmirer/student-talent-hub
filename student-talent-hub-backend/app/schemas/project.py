@@ -16,6 +16,7 @@ class ProjectResponse(ProjectCreateBase):
     id: int
     status: str
     owner_id: int
+    owner_name: str = ""
     
     class Config: 
         from_attributes = True
@@ -30,12 +31,23 @@ class ContributorCreate(ContributorCreateBase):
 class ContributorResponse(ContributorCreateBase):
     id: int
     project_id: int
+    user_name: str = ""
     
     class Config: 
         from_attributes = True
 
+class ProjectUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    github_link: Optional[str] = None
+    figma_link: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    is_open: Optional[bool] = None
+    status: Optional[str] = None
+
 class ProjectDetailResponse(ProjectResponse):
     contributors: List[ContributorResponse] = []
+    owner_name: str = ""
     
     class Config: 
         from_attributes = True

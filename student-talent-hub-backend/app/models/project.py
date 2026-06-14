@@ -18,6 +18,10 @@ class Project(Base):
     owner = relationship("User", back_populates="projects")
     contributors = relationship("ProjectContributor", back_populates="project")
 
+    @property
+    def owner_name(self):
+        return self.owner.name if self.owner else ""
+
 class ProjectContributor(Base):
     __tablename__ = "project_contributors"
 
@@ -27,3 +31,8 @@ class ProjectContributor(Base):
     role = Column(String)
 
     project = relationship("Project", back_populates="contributors")
+    user = relationship("User")
+
+    @property
+    def user_name(self):
+        return self.user.name if self.user else ""
