@@ -1,6 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from sqlalchemy import and_
+from sqlalchemy import select, and_, delete
 from app.models.skill import SkillCategory, UserSkill
 from app.schemas.skill import SkillCategoryCreate, UserSkillCreate, UserSkillWithCategoryResponse
 
@@ -49,6 +48,18 @@ async def update_user_skill(db: AsyncSession, user_skill: UserSkill, update_data
     await db.commit()
     await db.refresh(user_skill)
     return user_skill
+
+async def delete_skill_category(db: AsyncSession, skill_id: int):
+    result = await db.execute(select(SkillCategory).where(SkillCategory.id == skill_id))
+    skill = result.scalar_one_or_none()
+    if not skill:
+        return False
+    await db.execute(
+        delete(UserSkill).where(UserSkill.skill_id == skill_id)
+    )
+    await db.delete(skill)
+    await db.commit()
+    return True
 
 async def get_user_skills_with_category(db: AsyncSession, user_id: int):
     result = await db.execute(

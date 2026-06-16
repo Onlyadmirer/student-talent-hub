@@ -45,6 +45,24 @@ class ProjectUpdate(BaseModel):
     is_open: Optional[bool] = None
     status: Optional[str] = None
 
+class CollaborationRequestCreate(BaseModel):
+    role: str
+    message: Optional[str] = None
+
+class CollaborationRequestResponse(BaseModel):
+    id: int
+    project_id: int
+    requester_id: int
+    role: str
+    message: Optional[str] = None
+    status: str
+    created_at: Optional[str] = None
+    requester_name: str = ""
+    requester_nim: Optional[str] = None
+
+class CollaborationRequestUpdate(BaseModel):
+    status: str
+
 class ProjectDetailResponse(ProjectResponse):
     contributors: List[ContributorResponse] = []
     owner_name: str = ""

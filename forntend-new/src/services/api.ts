@@ -42,6 +42,7 @@ export const userApi = {
   getDashboardStats: () => api.get("/users/me/dashboard-stats"),
   getAll: (params?: Record<string, unknown>) => api.get("/users/", { params }),
   getById: (id: number) => api.get(`/users/${id}`),
+  getByNim: (nim: string) => api.get(`/users/by-nim/${nim}`),
 };
 
 export const projectApi = {
@@ -78,6 +79,41 @@ export const endorsementApi = {
     api.get(`/endorsements/?project_id=${projectId}`),
   create: (data: Record<string, unknown>) =>
     api.post("/endorsements/", data),
+};
+
+export const requestApi = {
+  sendRequest: (projectId: number, data: { role: string; message?: string }) =>
+    api.post(`/projects/${projectId}/requests`, data),
+  getProjectRequests: (projectId: number, statusFilter?: string) =>
+    api.get(`/projects/${projectId}/requests`, { params: statusFilter ? { status_filter: statusFilter } : {} }),
+  updateRequest: (projectId: number, requestId: number, status: string) =>
+    api.patch(`/projects/${projectId}/requests/${requestId}`, { status }),
+  cancelRequest: (projectId: number, requestId: number) =>
+    api.delete(`/projects/${projectId}/requests/${requestId}`),
+  getMyRequests: () => api.get("/projects/requests/me"),
+};
+
+export const adminApi = {
+  getDashboard: () => api.get("/admin/dashboard"),
+  getUsers: () => api.get("/admin/users"),
+  updateUserStatus: (userId: number, status: string) =>
+    api.patch(`/admin/users/${userId}/status`, { status }),
+  deleteUser: (userId: number) => api.delete(`/admin/users/${userId}`),
+  getProjects: () => api.get("/admin/projects"),
+  deleteProject: (projectId: number) => api.delete(`/admin/projects/${projectId}`),
+  getSkillCategories: () => api.get("/admin/skills/categories"),
+  createSkillCategory: (data: { name: string; description: string }) =>
+    api.post("/admin/skills/categories", data),
+  deleteSkillCategory: (categoryId: number) => api.delete(`/admin/skills/categories/${categoryId}`),
+};
+
+export const recruiterApi = {
+  getDashboard: () => api.get("/recruiters/dashboard"),
+  getStudents: (params?: Record<string, unknown>) => api.get("/recruiters/students", { params }),
+  getSavedStudents: () => api.get("/recruiters/saved-students"),
+  saveStudent: (studentId: number) => api.post(`/recruiters/saved-students/${studentId}`),
+  unsaveStudent: (studentId: number) => api.delete(`/recruiters/saved-students/${studentId}`),
+  getStudentSkills: (studentId: number) => api.get(`/recruiters/students/${studentId}/skills`),
 };
 
 export const searchApi = {

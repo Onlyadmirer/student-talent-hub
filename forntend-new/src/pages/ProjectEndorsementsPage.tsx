@@ -15,10 +15,14 @@ export default function ProjectEndorsementsPage() {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [projectTitle, setProjectTitle] = useState("");
+  const [projectOwnerId, setProjectOwnerId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!id) return;
-    projectApi.getById(Number(id)).then((res) => setProjectTitle(res.data.title)).catch(() => {});
+    projectApi.getById(Number(id)).then((res) => {
+      setProjectTitle(res.data.title);
+      setProjectOwnerId(res.data.owner_id);
+    }).catch(() => {});
     endorsementApi.getByProject(Number(id)).then((res) => setEndorsements(res.data)).catch(() => {});
   }, [id]);
 
@@ -27,8 +31,8 @@ export default function ProjectEndorsementsPage() {
     setSending(true);
     try {
       await endorsementApi.create({
-        to_user_id: 0,
-        skill_id: 1,
+        to_user_id: projectOwnerId || 0,
+        skill_id: null,
         project_id: Number(id),
         message: message.trim(),
       });

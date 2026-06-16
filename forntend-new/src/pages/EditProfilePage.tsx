@@ -41,6 +41,8 @@ export default function EditProfilePage() {
         name,
         major,
         nim,
+        bio: bio || null,
+        profile_picture: profilePicture || null,
       })
       await refreshUser()
       navigate('/profile')

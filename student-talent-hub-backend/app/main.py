@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.router import api_router
 from app.db.database import engine
 from app.db.base import Base
+from app.core.config import settings
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -17,7 +18,7 @@ app = FastAPI(title="API Student Talent & Project Hub", lifespan=lifespan)
 # Konfigurasi CORS untuk frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

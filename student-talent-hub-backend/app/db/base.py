@@ -4,3 +4,5 @@ from app.models.user import User
 from app.models.skill import SkillCategory, UserSkill
 from app.models.project import Project, ProjectContributor
 from app.models.endorsement import Endorsement
+from app.models.collaboration_request import CollaborationRequest
+from app.models.saved_student import SavedStudent

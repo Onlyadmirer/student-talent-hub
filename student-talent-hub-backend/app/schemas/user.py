@@ -18,6 +18,8 @@ class UserUpdate(BaseModel):
     name: Optional[str] = None
     nim: Optional[str] = None
     major: Optional[str] = None
+    bio: Optional[str] = None
+    profile_picture: Optional[str] = None
 
 class UserResponse(BaseModel):
     id: int
@@ -27,6 +29,8 @@ class UserResponse(BaseModel):
     role: str
     status: str
     major: Optional[str]
+    bio: Optional[str] = None
+    profile_picture: Optional[str] = None
     
     class Config: 
         from_attributes = True

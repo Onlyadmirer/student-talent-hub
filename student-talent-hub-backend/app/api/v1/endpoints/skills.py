@@ -67,6 +67,7 @@ async def delete_user_skill(
 async def read_skills_bulk(
     user_ids: str = Query(..., description="Comma-separated user IDs"),
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     ids = [int(x.strip()) for x in user_ids.split(",") if x.strip()]
     if not ids:

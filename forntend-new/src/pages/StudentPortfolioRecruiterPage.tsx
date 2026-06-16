@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "@phosphor-icons/react";
+import { ArrowLeft, Bookmark } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
-import { userApi, projectApi, skillApi } from "../services/api.ts";
+import { userApi, projectApi, skillApi, recruiterApi } from "../services/api.ts";
 import { PLACEHOLDER_AVATAR, PLACEHOLDER_COVER, coverErrorHandler, imgErrorHandler } from "../types/index.ts";
 import type { User, UserSkillBrief } from "../types/index.ts";
 
@@ -12,6 +12,7 @@ export default function StudentPortfolioRecruiterPage() {
   const [student, setStudent] = useState<User | null>(null);
   const [skills, setSkills] = useState<UserSkillBrief[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -31,7 +32,24 @@ export default function StudentPortfolioRecruiterPage() {
       const mine = res.data.filter((p: any) => p.owner_id === userId);
       setProjects(mine);
     }).catch(() => {});
+
+    recruiterApi.getSavedStudents().then((res) => {
+      setIsSaved(res.data.some((s: User) => s.id === userId));
+    }).catch(() => {});
   }, [id, navigate]);
+
+  const toggleSave = async () => {
+    if (!id) return;
+    try {
+      if (isSaved) {
+        await recruiterApi.unsaveStudent(Number(id));
+        setIsSaved(false);
+      } else {
+        await recruiterApi.saveStudent(Number(id));
+        setIsSaved(true);
+      }
+    } catch { /* ignore */ }
+  };
 
   if (!student) {
     return (
@@ -60,6 +78,15 @@ export default function StudentPortfolioRecruiterPage() {
           />
           <h1 className="text-[1.8rem] font-bold text-primary mb-1">{student.name}</h1>
           <p className="text-[0.95rem] text-[#475569] mb-5">{student.major || "—"}</p>
+          <button
+            onClick={toggleSave}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-none font-semibold text-[0.85rem] cursor-pointer transition-all mb-4 ${
+              isSaved ? "bg-amber-50 text-amber-700" : "bg-primary text-white"
+            }`}
+          >
+            <Bookmark size={18} weight={isSaved ? "fill" : "regular"} />
+            {isSaved ? "Saved" : "Save Student"}
+          </button>
           {student.bio && (
             <p className="text-[0.85rem] text-[#555] max-w-[500px] leading-relaxed">{student.bio}</p>
           )}

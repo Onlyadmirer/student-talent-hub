@@ -1,4 +1,4 @@
-import { SquaresFour, User, FolderSimple, Compass, Handshake, Shield, SignOut } from '@phosphor-icons/react'
+import { SquaresFour, User, FolderSimple, Compass, Handshake, Shield, Bookmark, SignOut } from '@phosphor-icons/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.tsx'
 
@@ -9,12 +9,20 @@ export default function Sidebar() {
 
   const isAdmin = user?.role === 'admin'
   const isStudent = user?.role === 'student'
+  const isRecruiter = user?.role === 'recruiter'
 
   const menuItems = isAdmin
     ? [
         { label: 'Admin Panel', icon: Shield, path: '/admin' },
         { label: 'My Profile', icon: User, path: '/profile' },
         { label: 'Explore', icon: Compass, path: '/explore' },
+      ]
+    : isRecruiter
+    ? [
+        { label: 'Dashboard', icon: SquaresFour, path: '/recruiter/dashboard' },
+        { label: 'My Profile', icon: User, path: '/profile' },
+        { label: 'Explore', icon: Compass, path: '/explore' },
+        { label: 'Saved Students', icon: Bookmark, path: '/recruiter/saved' },
       ]
     : [
         { label: 'Dashboard', icon: SquaresFour, path: '/dashboard' },

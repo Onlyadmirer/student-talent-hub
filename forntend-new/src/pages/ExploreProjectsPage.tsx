@@ -1,17 +1,23 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { Bookmark } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
-import { projectApi, userApi, skillApi } from "../services/api.ts";
+import { projectApi, userApi, skillApi, recruiterApi } from "../services/api.ts";
 import { PLACEHOLDER_COVER, PLACEHOLDER_AVATAR, coverErrorHandler, imgErrorHandler } from "../types/index.ts";
 import type { Project, User, SkillCategory, UserSkillBrief } from "../types/index.ts";
+import { useAuth } from "../context/AuthContext.tsx";
 
 export default function ExploreProjectsPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [mode, setMode] = useState<"projects" | "students">("projects");
   const [projects, setProjects] = useState<Project[]>([]);
   const [students, setStudents] = useState<User[]>([]);
   const [skillsByUser, setSkillsByUser] = useState<Record<number, UserSkillBrief[]>>({});
   const [categories, setCategories] = useState<SkillCategory[]>([]);
+  const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
+
+  const isRecruiter = user?.role === "recruiter";
 
   const [filterCatId, setFilterCatId] = useState("");
   const [filterSkillId, setFilterSkillId] = useState("");
@@ -22,9 +28,12 @@ export default function ExploreProjectsPage() {
     if (major) params.major = major;
     if (skillId) params.skill_id = Number(skillId);
     try {
-      const res = await userApi.getAll(params);
+      const res = isRecruiter ? await recruiterApi.getStudents(params) : await userApi.getAll(params);
       const users: User[] = res.data;
       setStudents(users);
+      if (isRecruiter) {
+        setSavedIds(new Set(users.filter((u: any) => u.is_saved).map((u: any) => u.id)));
+      }
       const ids = users.map((u) => u.id);
       if (ids.length > 0) {
         const skillRes = await skillApi.getBulk(ids);
@@ -35,7 +44,7 @@ export default function ExploreProjectsPage() {
     } catch {
       setStudents([]);
     }
-  }, []);
+  }, [isRecruiter]);
 
   useEffect(() => {
     projectApi.getAll().then((res) => setProjects(res.data)).catch(() => {});
@@ -56,6 +65,18 @@ export default function ExploreProjectsPage() {
   function getStudentSkills(userId: number): UserSkillBrief[] {
     return skillsByUser[userId] || [];
   }
+
+  const toggleSave = async (studentId: number) => {
+    try {
+      if (savedIds.has(studentId)) {
+        await recruiterApi.unsaveStudent(studentId);
+        setSavedIds((prev) => { const n = new Set(prev); n.delete(studentId); return n; });
+      } else {
+        await recruiterApi.saveStudent(studentId);
+        setSavedIds((prev) => new Set(prev).add(studentId));
+      }
+    } catch { /* ignore */ }
+  };
 
   return (
     <DashboardLayout>
@@ -215,9 +236,24 @@ export default function ExploreProjectsPage() {
                       </div>
                     )}
 
+                    {isRecruiter && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleSave(s.id); }}
+                        className={`w-full py-3 border-none rounded-lg font-medium text-[0.85rem] cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center gap-2 ${
+                          savedIds.has(s.id)
+                            ? "bg-amber-50 text-amber-700"
+                            : "bg-primary text-white"
+                        }`}
+                      >
+                        <Bookmark size={16} weight={savedIds.has(s.id) ? "fill" : "regular"} />
+                        {savedIds.has(s.id) ? "Saved" : "Save"}
+                      </button>
+                    )}
                     <button
                       onClick={() => navigate(`/recruiter/students/${s.id}`)}
-                      className="w-full py-3 bg-primary text-white border-none rounded-lg font-medium text-[0.85rem] cursor-pointer hover:opacity-90 transition-opacity"
+                      className={`w-full py-3 border-none rounded-lg font-medium text-[0.85rem] cursor-pointer hover:opacity-90 transition-opacity ${
+                        isRecruiter ? "bg-[#222] text-white mt-2" : "bg-primary text-white"
+                      }`}
                     >
                       View Portfolio
                     </button>

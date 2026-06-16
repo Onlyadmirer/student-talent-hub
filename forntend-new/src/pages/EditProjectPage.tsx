@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus } from "@phosphor-icons/react";
+import { ArrowLeft, Plus, Check } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { useAuth } from "../context/AuthContext.tsx";
-import { projectApi } from "../services/api.ts";
+import { projectApi, userApi } from "../services/api.ts";
 import type { Project } from "../types/index.ts";
 import { PLACEHOLDER_COVER, coverErrorHandler } from "../types/index.ts";
 
@@ -22,8 +22,11 @@ export default function EditProjectPage() {
   const [status, setStatus] = useState("published");
   const [saving, setSaving] = useState(false);
 
-  const [newCollabUserId, setNewCollabUserId] = useState("");
+  const [newCollabNim, setNewCollabNim] = useState("");
   const [newCollabRole, setNewCollabRole] = useState("");
+  const [collabError, setCollabError] = useState("");
+  const [collabSuccess, setCollabSuccess] = useState("");
+  const [addingCollab, setAddingCollab] = useState(false);
 
   useEffect(() => {
     if (!id || !user) return;
@@ -199,13 +202,21 @@ export default function EditProjectPage() {
             </tbody>
           </table>
 
+          {collabSuccess && (
+            <div className="mb-4 p-3 bg-green-50 text-green-700 rounded-lg text-[0.85rem] flex items-center gap-2">
+              <Check size={16} /> {collabSuccess}
+            </div>
+          )}
+          {collabError && (
+            <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-[0.85rem]">{collabError}</div>
+          )}
           <div className="flex gap-5 items-end max-md:flex-col">
             <div className="flex-1">
-              <label className="block text-[0.75rem] font-bold text-[#333] mb-2.5">Student ID (NIM)</label>
+              <label className="block text-[0.75rem] font-bold text-[#333] mb-2.5">Student NIM</label>
               <input
                 type="text"
-                value={newCollabUserId}
-                onChange={(e) => setNewCollabUserId(e.target.value)}
+                value={newCollabNim}
+                onChange={(e) => { setNewCollabNim(e.target.value); setCollabError(""); setCollabSuccess(""); }}
                 placeholder="Enter NIM"
                 className="w-full p-3.5 border border-[#eaeaea] rounded-lg text-[0.9rem] outline-none"
               />
@@ -215,16 +226,38 @@ export default function EditProjectPage() {
               <input
                 type="text"
                 value={newCollabRole}
-                onChange={(e) => setNewCollabRole(e.target.value)}
-                placeholder="Enter role"
+                onChange={(e) => { setNewCollabRole(e.target.value); setCollabError(""); setCollabSuccess(""); }}
+                placeholder="e.g. Frontend Developer"
                 className="w-full p-3.5 border border-[#eaeaea] rounded-lg text-[0.9rem] outline-none"
               />
             </div>
             <button
-              disabled={!newCollabUserId || !newCollabRole}
+              disabled={!newCollabNim || !newCollabRole || addingCollab}
+              onClick={async () => {
+                if (!id) return;
+                setAddingCollab(true);
+                setCollabError("");
+                setCollabSuccess("");
+                try {
+                  const userRes = await userApi.getByNim(newCollabNim);
+                  const userId = userRes.data.id;
+                  await projectApi.addContributor({
+                    user_id: userId,
+                    project_id: Number(id),
+                    role: newCollabRole,
+                  });
+                  setCollabSuccess(`Collaborator ${userRes.data.name} added successfully!`);
+                  setNewCollabNim("");
+                  setNewCollabRole("");
+                } catch (err: any) {
+                  setCollabError(err?.response?.data?.detail || "Failed to add collaborator. Check NIM.");
+                } finally {
+                  setAddingCollab(false);
+                }
+              }}
               className="bg-primary text-white border-none px-6 py-3.5 rounded-lg font-semibold flex items-center gap-2 h-[47px] cursor-pointer disabled:opacity-50"
             >
-              <Plus size={18} /> Add Collaborator
+              <Plus size={18} /> {addingCollab ? "Adding..." : "Add Collaborator"}
             </button>
           </div>
         </div>

@@ -72,6 +72,7 @@ async def update_user_me(
 async def read_user_by_id(
     user_id: int,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     user = await crud_user.get_user_by_id(db, user_id=user_id)
     if not user:
@@ -112,6 +113,17 @@ async def read_user_dashboard_summary(
         recent_projects=recent_projects,
     )
 
+@router.get("/by-nim/{nim}", response_model=UserResponse)
+async def read_user_by_nim(
+    nim: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    user = await crud_user.get_user_by_nim(db, nim=nim)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 @router.get("/", response_model=List[UserResponse])
 async def read_users(
     major: Optional[str] = Query(None, description="Filter by major"),
@@ -119,5 +131,7 @@ async def read_users(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not enough permissions")
     users = await crud_user.get_users(db, major=major, skill_id=skill_id)
     return users

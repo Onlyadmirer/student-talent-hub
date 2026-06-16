@@ -14,12 +14,35 @@ import ProjectEndorsementsPage from './pages/ProjectEndorsementsPage.tsx'
 import StudentProfilePage from './pages/StudentProfilePage.tsx'
 import StudentPortfolioRecruiterPage from './pages/StudentPortfolioRecruiterPage.tsx'
 import SearchPage from './pages/SearchPage.tsx'
+import MyRequestsPage from './pages/MyRequestsPage.tsx'
+import AdminDashboardPage from './pages/AdminDashboardPage.tsx'
+import AdminUsersPage from './pages/AdminUsersPage.tsx'
+import AdminProjectsPage from './pages/AdminProjectsPage.tsx'
+import AdminSkillsPage from './pages/AdminSkillsPage.tsx'
+import RecruiterDashboardPage from './pages/RecruiterDashboardPage.tsx'
+import RecruiterSavedPage from './pages/RecruiterSavedPage.tsx'
 import type { ReactNode } from 'react'
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth()
   if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>
   if (!user) return <Navigate to="/login" replace />
+  return <>{children}</>
+}
+
+function AdminRoute({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth()
+  if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+  if (!user) return <Navigate to="/login" replace />
+  if (user.role !== "admin") return <Navigate to="/dashboard" replace />
+  return <>{children}</>
+}
+
+function RecruiterRoute({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth()
+  if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+  if (!user) return <Navigate to="/login" replace />
+  if (user.role !== "recruiter") return <Navigate to="/dashboard" replace />
   return <>{children}</>
 }
 
@@ -45,8 +68,15 @@ function AppRoutes() {
       <Route path="/explore" element={<ProtectedRoute><ExploreProjectsPage /></ProtectedRoute>} />
       <Route path="/projects/:id/endorsements" element={<ProtectedRoute><ProjectEndorsementsPage /></ProtectedRoute>} />
       <Route path="/students/:id" element={<ProtectedRoute><StudentProfilePage /></ProtectedRoute>} />
-      <Route path="/recruiter/students/:id" element={<ProtectedRoute><StudentPortfolioRecruiterPage /></ProtectedRoute>} />
+      <Route path="/recruiter/students/:id" element={<RecruiterRoute><StudentPortfolioRecruiterPage /></RecruiterRoute>} />
       <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+      <Route path="/my-requests" element={<ProtectedRoute><MyRequestsPage /></ProtectedRoute>} />
+      <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+      <Route path="/admin/users" element={<AdminRoute><AdminUsersPage /></AdminRoute>} />
+      <Route path="/admin/projects" element={<AdminRoute><AdminProjectsPage /></AdminRoute>} />
+      <Route path="/admin/skills" element={<AdminRoute><AdminSkillsPage /></AdminRoute>} />
+      <Route path="/recruiter/dashboard" element={<RecruiterRoute><RecruiterDashboardPage /></RecruiterRoute>} />
+      <Route path="/recruiter/saved" element={<RecruiterRoute><RecruiterSavedPage /></RecruiterRoute>} />
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

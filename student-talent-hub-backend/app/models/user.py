@@ -13,6 +13,8 @@ class User(Base):
     major = Column(String, nullable=True)
     role = Column(String, default="student")
     status = Column(String, default="active")
+    bio = Column(String, nullable=True)
+    profile_picture = Column(String, nullable=True)
 
     projects = relationship("Project", back_populates="owner")
     skills = relationship("UserSkill", backref="user")

@@ -155,6 +155,40 @@ export interface SearchProjectResult {
   owner_name: string;
 }
 
+export interface CollaborationRequest {
+  id: number;
+  project_id: number;
+  requester_id: number;
+  role: string;
+  message: string | null;
+  status: "pending" | "accepted" | "rejected";
+  created_at: string | null;
+  requester_name: string;
+  requester_nim: string | null;
+}
+
+export interface AdminDashboard {
+  total_users: number;
+  total_students: number;
+  total_recruiters: number;
+  total_projects: number;
+  open_projects: number;
+  total_skills: number;
+  total_endorsements: number;
+  recent_users: User[];
+}
+
+export interface RecruiterDashboard {
+  total_saved: number;
+  total_endorsements_given: number;
+  total_students: number;
+  recent_saved: User[];
+}
+
+export interface RecruiterStudent extends User {
+  is_saved: boolean;
+}
+
 export interface SearchResponse {
   users: SearchUserResult[];
   projects: SearchProjectResult[];
