@@ -49,8 +49,21 @@ function RecruiterRoute({ children }: { children: ReactNode }) {
 function PublicRoute({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth()
   if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>
-  if (user) return <Navigate to="/dashboard" replace />
+  if (user) {
+    if (user.role === 'admin') return <Navigate to="/admin" replace />
+    if (user.role === 'recruiter') return <Navigate to="/recruiter/dashboard" replace />
+    return <Navigate to="/dashboard" replace />
+  }
   return <>{children}</>
+}
+
+function HomeRedirect() {
+  const { user, loading } = useAuth()
+  if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+  if (!user) return <Navigate to="/login" replace />
+  if (user.role === 'admin') return <Navigate to="/admin" replace />
+  if (user.role === 'recruiter') return <Navigate to="/recruiter/dashboard" replace />
+  return <Navigate to="/dashboard" replace />
 }
 
 function AppRoutes() {
@@ -77,7 +90,7 @@ function AppRoutes() {
       <Route path="/admin/skills" element={<AdminRoute><AdminSkillsPage /></AdminRoute>} />
       <Route path="/recruiter/dashboard" element={<RecruiterRoute><RecruiterDashboardPage /></RecruiterRoute>} />
       <Route path="/recruiter/saved" element={<RecruiterRoute><RecruiterSavedPage /></RecruiterRoute>} />
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<HomeRedirect />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )

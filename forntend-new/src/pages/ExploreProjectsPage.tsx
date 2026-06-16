@@ -20,13 +20,14 @@ export default function ExploreProjectsPage() {
   const isRecruiter = user?.role === "recruiter";
 
   const [filterCatId, setFilterCatId] = useState("");
-  const [filterSkillId, setFilterSkillId] = useState("");
+  const [proficiencyLevel, setProficiencyLevel] = useState("");
   const [filterMajor, setFilterMajor] = useState("");
 
-  const loadStudents = useCallback(async (skillId: string, major: string) => {
+  const loadStudents = useCallback(async (skillId: string, level: string, major: string) => {
     const params: Record<string, unknown> = {};
     if (major) params.major = major;
     if (skillId) params.skill_id = Number(skillId);
+    if (level) params.proficiency_level = level;
     try {
       const res = isRecruiter ? await recruiterApi.getStudents(params) : await userApi.getAll(params);
       const users: User[] = res.data;
@@ -49,17 +50,15 @@ export default function ExploreProjectsPage() {
   useEffect(() => {
     projectApi.getAll().then((res) => setProjects(res.data)).catch(() => {});
     skillApi.getCategories().then((res) => setCategories(res.data)).catch(() => {});
-    loadStudents("", "");
+    loadStudents("", "", "");
   }, [loadStudents]);
 
   const filteredProjects = projects;
 
   const majors = [...new Set(students.map((s) => s.major).filter(Boolean))] as string[];
 
-  const skillsInCategory = categories.filter((c) => !filterCatId || String(c.id) === filterCatId);
-
   const handleApply = () => {
-    loadStudents(filterSkillId, filterMajor);
+    loadStudents(filterCatId, proficiencyLevel, filterMajor);
   };
 
   function getStudentSkills(userId: number): UserSkillBrief[] {
@@ -160,7 +159,7 @@ export default function ExploreProjectsPage() {
                 <label className="block text-[0.7rem] font-semibold text-[#64748b] mb-2">Skill Category</label>
                 <select
                   value={filterCatId}
-                  onChange={(e) => { setFilterCatId(e.target.value); setFilterSkillId(""); }}
+                  onChange={(e) => setFilterCatId(e.target.value)}
                   className="w-full p-3 bg-[#f8fafc] border border-[#e2e8f0] rounded-lg text-[0.85rem] outline-none appearance-none"
                 >
                   <option value="">All Categories</option>
@@ -171,16 +170,16 @@ export default function ExploreProjectsPage() {
               </div>
 
               <div className="mb-5">
-                <label className="block text-[0.7rem] font-semibold text-[#64748b] mb-2">Specific Skill</label>
+                <label className="block text-[0.7rem] font-semibold text-[#64748b] mb-2">Proficiency Level</label>
                 <select
-                  value={filterSkillId}
-                  onChange={(e) => setFilterSkillId(e.target.value)}
+                  value={proficiencyLevel}
+                  onChange={(e) => setProficiencyLevel(e.target.value)}
                   className="w-full p-3 bg-[#f8fafc] border border-[#e2e8f0] rounded-lg text-[0.85rem] outline-none appearance-none"
                 >
-                  <option value="">Any Skill</option>
-                  {skillsInCategory.map((c) => (
-                    <option key={c.id} value={String(c.id)}>{c.name}</option>
-                  ))}
+                  <option value="">All Levels</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="expert">Expert</option>
                 </select>
               </div>
 

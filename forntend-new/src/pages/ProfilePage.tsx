@@ -21,8 +21,8 @@ export default function ProfilePage() {
   }
 
   useEffect(() => {
-    fetchSkills()
-  }, [])
+    if (user?.role === 'student') fetchSkills()
+  }, [user])
 
   const levelLabel = (level: string) => level.charAt(0).toUpperCase() + level.slice(1)
   const proficiencyColor = (level: string) => {
@@ -67,7 +67,7 @@ export default function ProfilePage() {
                     </span>
                   )}
                   <span className="flex items-center gap-1 bg-[#f3f4f6] px-3 py-1.5 rounded-full text-[0.8rem] text-[#555] font-medium">
-                    <MapPin size={14} /> {user?.nim || '—'}
+                    <MapPin size={14} /> {user?.role === 'recruiter' ? `NIP: ${user?.nim || '—'}` : user?.nim || '—'}
                   </span>
                 </div>
               </div>
@@ -92,43 +92,46 @@ export default function ProfilePage() {
           </p>
         </div>
 
-        {/* Skills Card */}
-        <div className="bg-white rounded-2xl p-10 w-full mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-          <div className="flex justify-between items-center mb-5">
-            <h2 className="text-[1.2rem] font-semibold text-primary">My Skills</h2>
-            <button
-              onClick={() => setShowAddSkill(true)}
-              className="text-primary bg-none border-none font-semibold text-[0.9rem] cursor-pointer"
-            >
-              + Add Skill
-            </button>
+        {user?.role === 'student' && (
+          <div className="bg-white rounded-2xl p-10 w-full mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-[1.2rem] font-semibold text-primary">My Skills</h2>
+              <button
+                onClick={() => setShowAddSkill(true)}
+                className="text-primary bg-none border-none font-semibold text-[0.9rem] cursor-pointer"
+              >
+                + Add Skill
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-3.5">
+              {skills.length > 0 ? (
+                skills.map((s) => (
+                  <div
+                    key={s.id}
+                    className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-[0.9rem] font-medium ${tagColor(s.proficiency_level)}`}
+                  >
+                    {s.skill_name || `Skill #${s.skill_id}`}
+                    <span className={`px-2 py-0.5 rounded-full text-[0.65rem] font-bold ${proficiencyColor(s.proficiency_level)}`}>
+                      {levelLabel(s.proficiency_level)}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-[#888] text-sm">No skills added yet.</p>
+              )}
+            </div>
           </div>
-          <div className="flex flex-wrap gap-3.5">
-            {skills.length > 0 ? (
-              skills.map((s) => (
-                <div
-                  key={s.id}
-                  className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-[0.9rem] font-medium ${tagColor(s.proficiency_level)}`}
-                >
-                  {s.skill_name || `Skill #${s.skill_id}`}
-                  <span className={`px-2 py-0.5 rounded-full text-[0.65rem] font-bold ${proficiencyColor(s.proficiency_level)}`}>
-                    {levelLabel(s.proficiency_level)}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="text-[#888] text-sm">No skills added yet.</p>
-            )}
-          </div>
-        </div>
+        )}
       </div>
 
-      <AddSkillModal
-        isOpen={showAddSkill}
-        onClose={() => setShowAddSkill(false)}
-        onSkillAdded={fetchSkills}
-        existingSkillIds={skills.map((s) => s.skill_id)}
-      />
+      {user?.role === 'student' && (
+        <AddSkillModal
+          isOpen={showAddSkill}
+          onClose={() => setShowAddSkill(false)}
+          onSkillAdded={fetchSkills}
+          existingSkillIds={skills.map((s) => s.skill_id)}
+        />
+      )}
     </DashboardLayout>
   )
 }

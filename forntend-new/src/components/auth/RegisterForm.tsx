@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { User, IdentificationCard, GraduationCap, LockKey, ShieldCheck, Eye, EyeSlash, Briefcase } from '@phosphor-icons/react'
+import { User, EnvelopeSimple, IdentificationCard, GraduationCap, LockKey, ShieldCheck, Eye, EyeSlash, Briefcase } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext.tsx'
 
 export default function RegisterForm() {
-  const [form, setForm] = useState({ fullname: '', nim: '', major: '', password: '', confirmPassword: '', role: 'student' })
+  const [form, setForm] = useState({ fullname: '', email: '', nim: '', major: '', password: '', confirmPassword: '', role: 'student' })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState('')
@@ -26,15 +26,15 @@ export default function RegisterForm() {
     try {
       const data: Record<string, unknown> = {
         name: form.fullname,
+        email: form.email,
         password: form.password,
         role: form.role,
       }
       if (isStudent) {
-        data.email = form.nim ? `${form.nim}@student.edu` : ''
         data.nim = form.nim
         data.major = form.major
       } else {
-        data.email = `${form.fullname.toLowerCase().replace(/\s+/g, '.')}@recruiter.com`
+        data.nim = form.nim
         data.major = null
       }
       await register(data)
@@ -95,6 +95,15 @@ export default function RegisterForm() {
               </div>
             </div>
 
+            <div className="mb-5">
+              <label htmlFor="email" className="block text-xs font-semibold text-[#374151] mb-2">Email</label>
+              <div className="relative flex items-center">
+                <EnvelopeSimple size={20} className="absolute left-[14px] text-[#9ca3af]" />
+                <input id="email" type="email" placeholder="Enter your email" value={form.email} onChange={update('email')}
+                  className="w-full py-3 pl-[42px] pr-[14px] border border-[#e5e7eb] rounded-lg text-sm text-[#111] outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,77,64,0.1)] placeholder:text-[#6B7280]" required />
+              </div>
+            </div>
+
             {isStudent && (
               <div className="flex gap-4 mb-5 max-md:flex-col max-md:gap-0">
                 <div className="flex-1">
@@ -122,8 +131,13 @@ export default function RegisterForm() {
             )}
 
             {!isStudent && (
-              <div className="mb-5 p-4 bg-blue-50 rounded-lg text-[0.8rem] text-blue-700">
-                You will receive a recruiter account with access to explore student portfolios and talent search.
+              <div className="flex-1 mb-5">
+                <label htmlFor="nip" className="block text-xs font-semibold text-[#374151] mb-2">NIP</label>
+                <div className="relative flex items-center">
+                  <IdentificationCard size={20} className="absolute left-[14px] text-[#9ca3af]" />
+                  <input id="nip" type="text" placeholder="Enter NIP" value={form.nim} onChange={update('nim')}
+                    className="w-full py-3 pl-[42px] pr-[14px] border border-[#e5e7eb] rounded-lg text-sm text-[#111] outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,77,64,0.1)] placeholder:text-[#6B7280]" />
+                </div>
               </div>
             )}
 

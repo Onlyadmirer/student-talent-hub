@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Check } from "@phosphor-icons/react";
+import { ArrowLeft, Plus, Check, Trash } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { useAuth } from "../context/AuthContext.tsx";
 import { projectApi, userApi } from "../services/api.ts";
-import type { Project } from "../types/index.ts";
+import type { Project, ContributorWithUser } from "../types/index.ts";
 import { PLACEHOLDER_COVER, coverErrorHandler } from "../types/index.ts";
 
 export default function EditProjectPage() {
@@ -19,7 +19,6 @@ export default function EditProjectPage() {
   const [coverImage, setCoverImage] = useState("");
   const [techStack, setTechStack] = useState("");
   const [isOpen, setIsOpen] = useState(true);
-  const [status, setStatus] = useState("published");
   const [saving, setSaving] = useState(false);
 
   const [newCollabNim, setNewCollabNim] = useState("");
@@ -27,6 +26,13 @@ export default function EditProjectPage() {
   const [collabError, setCollabError] = useState("");
   const [collabSuccess, setCollabSuccess] = useState("");
   const [addingCollab, setAddingCollab] = useState(false);
+  const [contributors, setContributors] = useState<ContributorWithUser[]>([]);
+  const [removingId, setRemovingId] = useState<number | null>(null);
+
+  const loadContributors = () => {
+    if (!id) return;
+    projectApi.getContributors(Number(id)).then((r) => setContributors(r.data)).catch(() => {});
+  };
 
   useEffect(() => {
     if (!id || !user) return;
@@ -43,8 +49,8 @@ export default function EditProjectPage() {
       setCoverImage(p.thumbnail_url || "");
       setTechStack("");
       setIsOpen(p.is_open);
-      setStatus(p.status);
     }).catch(() => navigate("/projects"));
+    loadContributors();
   }, [id, user]);
 
   const handleSave = async () => {
@@ -58,11 +64,23 @@ export default function EditProjectPage() {
         figma_link: demoLink || null,
         thumbnail_url: coverImage || null,
         is_open: isOpen,
-        status,
       });
       navigate(`/projects/${id}`);
     } catch {
       setSaving(false);
+    }
+  };
+
+  const handleRemoveContributor = async (contributorId: number) => {
+    if (!id) return;
+    setRemovingId(contributorId);
+    try {
+      await projectApi.removeContributor(Number(id), contributorId);
+      setContributors((prev) => prev.filter((c) => c.id !== contributorId));
+    } catch {
+      alert("Failed to remove contributor.");
+    } finally {
+      setRemovingId(null);
     }
   };
 
@@ -159,17 +177,6 @@ export default function EditProjectPage() {
                   <option value="closed">Closed</option>
                 </select>
               </div>
-              <div className="mb-6">
-                <label className="block text-[0.75rem] font-bold text-[#333] mb-2.5">Visibility</label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full p-3.5 border border-[#eaeaea] rounded-lg text-[0.9rem] outline-none bg-white"
-                >
-                  <option value="published">Published</option>
-                  <option value="hidden">Hidden</option>
-                </select>
-              </div>
             </div>
           </div>
         </div>
@@ -199,6 +206,28 @@ export default function EditProjectPage() {
                 <td className="py-3.5 border-b border-[#eaeaea] text-[0.9rem]">Owner</td>
                 <td className="py-3.5 border-b border-[#eaeaea]">—</td>
               </tr>
+              {contributors.map((c) => (
+                <tr key={c.id}>
+                  <td className="py-3.5 border-b border-[#eaeaea]">
+                    <div className="flex items-center gap-3">
+                      <div className="w-[32px] h-[32px] rounded-full bg-[#dbeafe] flex items-center justify-center text-[0.75rem] font-bold text-[#111]">
+                        {(c.user_name || "U").charAt(0)}
+                      </div>
+                      <span className="text-[0.9rem]">{c.user_name || `User #${c.user_id}`}</span>
+                    </div>
+                  </td>
+                  <td className="py-3.5 border-b border-[#eaeaea] text-[0.9rem]">{c.role}</td>
+                  <td className="py-3.5 border-b border-[#eaeaea]">
+                    <button
+                      onClick={() => handleRemoveContributor(c.id)}
+                      disabled={removingId === c.id}
+                      className="bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-[0.8rem] font-semibold flex items-center gap-1.5 cursor-pointer disabled:opacity-50 hover:bg-red-100 transition-colors"
+                    >
+                      <Trash size={14} /> {removingId === c.id ? "Removing..." : "Remove"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
 
@@ -249,6 +278,7 @@ export default function EditProjectPage() {
                   setCollabSuccess(`Collaborator ${userRes.data.name} added successfully!`);
                   setNewCollabNim("");
                   setNewCollabRole("");
+                  loadContributors();
                 } catch (err: any) {
                   setCollabError(err?.response?.data?.detail || "Failed to add collaborator. Check NIM.");
                 } finally {

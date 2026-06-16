@@ -5,7 +5,7 @@ import { authApi } from '../services/api.ts'
 interface AuthContextType {
   user: User | null
   token: string | null
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<User>
   register: (data: Record<string, unknown>) => Promise<void>
   logout: () => void
   loading: boolean
@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(access_token)
     const me = await authApi.getMe()
     setUser(me.data)
+    return me.data
   }
 
   const register = async (data: Record<string, unknown>) => {

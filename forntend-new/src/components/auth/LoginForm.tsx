@@ -13,8 +13,14 @@ export default function LoginForm() {
     e.preventDefault()
     setError('')
     try {
-      await login(nim, password)
-      navigate('/dashboard')
+      const userData = await login(nim, password)
+      if (userData.role === 'admin') {
+        navigate('/admin')
+      } else if (userData.role === 'recruiter') {
+        navigate('/recruiter/dashboard')
+      } else {
+        navigate('/dashboard')
+      }
     } catch (err: unknown) {
       const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail
       setError(detail || 'Login failed. Please try again.')

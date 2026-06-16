@@ -47,6 +47,7 @@ export default function ProjectDetailPage() {
   if (!project) return <DashboardLayout><div className="flex justify-center py-20 text-[#888]">Loading...</div></DashboardLayout>;
 
   const isOwner = user?.id === project.owner_id;
+  const isContributor = user ? (project.contributors || []).some((c: any) => c.user_id === user.id) : false;
   const techStack = project.tech_stack ? project.tech_stack.split(",").map((t: string) => t.trim()) : [];
   const ownerName = project.owner_name || user?.name || "User";
 
@@ -155,7 +156,7 @@ export default function ProjectDetailPage() {
                 <div className="flex items-center gap-2 px-5 py-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-[0.85rem] font-semibold">
                   <Clock size={18} /> Request Pending ({myRequest.role})
                 </div>
-              ) : project.is_open ? (
+              ) : user?.role === "student" && project.is_open && !isContributor ? (
                 <button
                   onClick={() => setShowRequestModal(true)}
                   className="bg-primary text-white border-none px-6 py-3 rounded-lg font-semibold flex items-center gap-2 cursor-pointer"
@@ -311,24 +312,33 @@ export default function ProjectDetailPage() {
                 )}
               </div>
 
-              {contributors.length > 0 && (
-                <div className="bg-white rounded-2xl p-[25px] shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-                  <h3 className="text-[0.7rem] font-bold text-[#888] uppercase tracking-wide mb-3.5">Project Team</h3>
-                  {contributors.map((c) => (
-                    <div key={c.id} className="flex items-center gap-3.5 mb-4 last:mb-0">
-                      <img
-                        src={PLACEHOLDER_AVATAR}
-                        className="w-[40px] h-[40px] rounded-full object-cover"
-                        alt=""
-                      />
-                      <div>
-                        <h4 className="text-[0.9rem] font-semibold text-[#111]">{c.user_name || `User #${c.user_id}`}</h4>
-                        <p className="text-[0.75rem] text-[#666]">{c.role}</p>
-                      </div>
-                    </div>
-                  ))}
+              <div className="bg-white rounded-2xl p-[25px] shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+                <h3 className="text-[0.7rem] font-bold text-[#888] uppercase tracking-wide mb-3.5">Project Team</h3>
+                <div className="flex items-center gap-3.5 mb-4">
+                  <img
+                    src={PLACEHOLDER_AVATAR}
+                    className="w-[40px] h-[40px] rounded-full object-cover"
+                    alt=""
+                  />
+                  <div>
+                    <h4 className="text-[0.9rem] font-semibold text-[#111]">{project.owner_name || "Owner"}</h4>
+                    <p className="text-[0.75rem] text-[#666]">Owner</p>
+                  </div>
                 </div>
-              )}
+                {contributors.map((c) => (
+                  <div key={c.id} className="flex items-center gap-3.5 mb-4 last:mb-0">
+                    <img
+                      src={PLACEHOLDER_AVATAR}
+                      className="w-[40px] h-[40px] rounded-full object-cover"
+                      alt=""
+                    />
+                    <div>
+                      <h4 className="text-[0.9rem] font-semibold text-[#111]">{c.user_name || `User #${c.user_id}`}</h4>
+                      <p className="text-[0.75rem] text-[#666]">{c.role}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

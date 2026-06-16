@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, PaperPlaneRight } from "@phosphor-icons/react";
+import { ArrowLeft, PaperPlaneRight, SealCheck } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { useAuth } from "../context/AuthContext.tsx";
 import { endorsementApi, projectApi } from "../services/api.ts";
 import { PLACEHOLDER_AVATAR, imgErrorHandler } from "../types/index.ts";
-import type { EndorsementWithUser } from "../types/index.ts";
+import type { EndorsementWithUser, ContributorWithUser } from "../types/index.ts";
 
 export default function ProjectEndorsementsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [endorsements, setEndorsements] = useState<EndorsementWithUser[]>([]);
-  const [message, setMessage] = useState("");
-  const [sending, setSending] = useState(false);
   const [projectTitle, setProjectTitle] = useState("");
   const [projectOwnerId, setProjectOwnerId] = useState<number | null>(null);
+  const [contributors, setContributors] = useState<ContributorWithUser[]>([]);
+  const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -24,7 +25,10 @@ export default function ProjectEndorsementsPage() {
       setProjectOwnerId(res.data.owner_id);
     }).catch(() => {});
     endorsementApi.getByProject(Number(id)).then((res) => setEndorsements(res.data)).catch(() => {});
+    projectApi.getContributors(Number(id)).then((res) => setContributors(res.data)).catch(() => {});
   }, [id]);
+
+  const isOwnerOrCollaborator = user && (user.id === projectOwnerId || contributors.some((c) => c.user_id === user.id));
 
   const handleSubmit = async () => {
     if (!message.trim() || !id || !user) return;
@@ -62,33 +66,33 @@ export default function ProjectEndorsementsPage() {
         </div>
 
         <div className="grid grid-cols-[1fr_1.8fr] gap-10 max-md:grid-cols-1">
-          <div className="bg-white rounded-xl p-8 shadow-sm border-t-4 border-t-primary h-fit">
-            <h2 className="text-[1.5rem] font-bold text-primary mb-6" style={{ fontFamily: "Georgia, serif" }}>
-              Give Appreciation for this Project
-            </h2>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Write a testimonial or feedback about this project..."
-              className="w-full p-4 border-none rounded-lg text-[0.9rem] bg-[#f3f4f6] outline-none h-[140px] resize-none mb-3.5"
-            />
-            <span className="text-[0.75rem] text-[#888] italic block mb-5">
-              Your endorsement will appear on the owner's profile
-            </span>
-            <button
-              onClick={handleSubmit}
-              disabled={!message.trim() || sending}
-              className="w-full bg-primary text-white border-none p-3.5 rounded-lg font-semibold text-[0.9rem] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-            >
-              Submit Endorsement <PaperPlaneRight size={18} />
-            </button>
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-[1.5rem] font-bold text-primary" style={{ fontFamily: "Georgia, serif" }}>
-                What people say about this project
+          {!isOwnerOrCollaborator && (
+            <div className="bg-white rounded-xl p-8 shadow-sm border-t-4 border-t-primary h-fit">
+              <h2 className="text-[1.5rem] font-bold text-primary mb-6" style={{ fontFamily: "Georgia, serif" }}>
+                Give Appreciation for this Project
               </h2>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Write a testimonial or feedback about this project..."
+                className="w-full p-4 border-none rounded-lg text-[0.9rem] bg-[#f3f4f6] outline-none h-[140px] resize-none mb-3.5"
+              />
+              <span className="text-[0.75rem] text-[#888] italic block mb-5">
+                Your endorsement will appear on the owner's profile
+              </span>
+              <button
+                onClick={handleSubmit}
+                disabled={!message.trim() || sending}
+                className="w-full bg-primary text-white border-none p-3.5 rounded-lg font-semibold text-[0.9rem] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                Submit Endorsement <PaperPlaneRight size={18} />
+              </button>
+            </div>
+          )}
+
+          <div className={isOwnerOrCollaborator ? "col-span-full" : ""}>
+            <div className="flex items-center gap-3 mb-8">
+              <SealCheck size={28} className="text-primary" />
               <span className="bg-[#a7f3d0] text-[#047857] px-3 py-1.5 rounded-full text-[0.75rem] font-bold">
                 {endorsements.length} Testimonial{endorsements.length !== 1 ? "s" : ""}
               </span>
@@ -120,7 +124,7 @@ export default function ProjectEndorsementsPage() {
             ))}
 
             {endorsements.length === 0 && (
-              <p className="text-[#888] text-sm">No endorsements yet. Be the first!</p>
+              <p className="text-[#888] text-sm">No endorsements yet for this project.</p>
             )}
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Eye } from '@phosphor-icons/react'
+import { ArrowLeft, X } from '@phosphor-icons/react'
 import DashboardLayout from '../components/layout/DashboardLayout.tsx'
 import { useAuth } from '../context/AuthContext.tsx'
 import { userApi, skillApi } from '../services/api.ts'
@@ -29,9 +29,11 @@ export default function EditProfilePage() {
       setBio(user.bio || '')
       setProfilePicture(user.profile_picture || '')
     }
-    skillApi.getMySkills()
-      .then((res) => setSkills(res.data))
-      .catch(() => {})
+    if (user?.role === 'student') {
+      skillApi.getMySkills()
+        .then((res) => setSkills(res.data))
+        .catch(() => {})
+    }
   }, [user])
 
   const handleSave = async () => {
@@ -48,6 +50,15 @@ export default function EditProfilePage() {
       navigate('/profile')
     } catch {
       setSaving(false)
+    }
+  }
+
+  const handleDeleteSkill = async (skillId: number) => {
+    try {
+      await skillApi.deleteSkill(skillId)
+      setSkills((prev) => prev.filter((s) => s.id !== skillId))
+    } catch {
+      alert('Failed to delete skill.')
     }
   }
 
@@ -98,7 +109,7 @@ export default function EditProfilePage() {
               />
             </div>
             <div className="flex-1">
-              <label className="block text-[0.75rem] font-bold text-[#555] uppercase tracking-wide mb-2">NIM / Student ID</label>
+              <label className="block text-[0.75rem] font-bold text-[#555] uppercase tracking-wide mb-2">{user?.role === 'recruiter' ? 'NIP' : 'NIM / Student ID'}</label>
               <input
                 type="text"
                 value={nim}
@@ -108,6 +119,7 @@ export default function EditProfilePage() {
             </div>
           </div>
 
+          {user?.role === 'student' && (
           <div className="mb-5">
             <label className="block text-[0.75rem] font-bold text-[#555] uppercase tracking-wide mb-2">Major</label>
             <input
@@ -117,7 +129,7 @@ export default function EditProfilePage() {
               className="w-full p-3.5 border border-[#e5e7eb] rounded-lg text-[0.9rem] text-[#333] outline-none"
             />
           </div>
-
+          )}
           <div className="mb-5">
             <label className="block text-[0.75rem] font-bold text-[#555] uppercase tracking-wide mb-2">Bio</label>
             <textarea
@@ -127,12 +139,19 @@ export default function EditProfilePage() {
             />
           </div>
 
+          {user?.role === 'student' && (
           <div className="mb-5">
             <label className="block text-[0.75rem] font-bold text-[#555] uppercase tracking-wide mb-2">Primary Skills</label>
             <div className="flex flex-wrap gap-2.5 mt-2.5">
               {skills.map((s) => (
-                <span key={s.id} className="bg-[#e0fdf4] text-primary px-4 py-2 rounded-full text-[0.8rem] font-semibold">
+                <span key={s.id} className="inline-flex items-center gap-1.5 bg-[#e0fdf4] text-primary px-4 py-2 rounded-full text-[0.8rem] font-semibold">
                   {s.skill_name || `Skill #${s.skill_id}`}
+                  <button
+                    onClick={() => handleDeleteSkill(s.id)}
+                    className="bg-none border-none text-primary/60 hover:text-primary cursor-pointer p-0 flex items-center"
+                  >
+                    <X size={14} weight="bold" />
+                  </button>
                 </span>
               ))}
               <button
@@ -144,6 +163,7 @@ export default function EditProfilePage() {
             </div>
           </div>
 
+          )}
           <div className="flex justify-end gap-3.5 mt-10">
             <button
               onClick={() => navigate('/profile')}
@@ -161,30 +181,16 @@ export default function EditProfilePage() {
           </div>
         </div>
 
-        {/* Privacy Card */}
-        <div className="bg-[#e0fdf4] rounded-2xl p-[25px_30px] flex items-center justify-between border border-[#ccfbf1] mb-6">
-          <div className="flex items-center gap-5">
-            <div className="w-[45px] h-[45px] bg-[#bbf7d0] text-primary rounded-full flex items-center justify-center text-[1.5rem]">
-              <Eye size={24} />
-            </div>
-            <div>
-              <h3 className="text-base text-primary font-semibold mb-1">Your profile is currently public</h3>
-              <p className="text-[0.8rem] text-[#0f766e]">Employers can find and view your talent profile in search results.</p>
-            </div>
-          </div>
-          <label className="relative inline-block w-[50px] h-[26px]">
-            <input type="checkbox" defaultChecked className="opacity-0 w-0 h-0" />
-            <span className="absolute cursor-pointer inset-0 bg-primary rounded-[34px] transition-all before:absolute before:h-5 before:w-5 before:left-[3px] before:bottom-[3px] before:bg-white before:rounded-full before:transition-all before:content-['']" />
-          </label>
-        </div>
       </div>
 
-      <AddSkillModal
-        isOpen={showAddSkill}
-        onClose={() => setShowAddSkill(false)}
-        onSkillAdded={() => skillApi.getMySkills().then((res) => setSkills(res.data))}
-        existingSkillIds={skills.map((s) => s.skill_id)}
-      />
+      {user?.role === 'student' && (
+        <AddSkillModal
+          isOpen={showAddSkill}
+          onClose={() => setShowAddSkill(false)}
+          onSkillAdded={() => skillApi.getMySkills().then((res) => setSkills(res.data))}
+          existingSkillIds={skills.map((s) => s.skill_id)}
+        />
+      )}
     </DashboardLayout>
   )
 }

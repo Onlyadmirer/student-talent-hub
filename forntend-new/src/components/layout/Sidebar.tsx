@@ -15,7 +15,6 @@ export default function Sidebar() {
     ? [
         { label: 'Admin Panel', icon: Shield, path: '/admin' },
         { label: 'My Profile', icon: User, path: '/profile' },
-        { label: 'Explore', icon: Compass, path: '/explore' },
       ]
     : isRecruiter
     ? [

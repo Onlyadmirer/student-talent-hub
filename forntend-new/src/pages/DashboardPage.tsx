@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import { ClipboardText, Lightning, SealCheck } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
@@ -86,12 +87,12 @@ export default function DashboardPage() {
             <h2 className="font-heading text-[1.5rem] font-bold text-primary">
               Recent Projects
             </h2>
-            <a
-              href="#"
+            <Link
+              to="/projects"
               className="text-sm text-[#555] font-semibold no-underline hover:text-primary hover:underline"
             >
               View All
-            </a>
+            </Link>
           </div>
           <div className="bg-white rounded-xl py-2.5 px-5 shadow-[0_4px_15px_rgba(0,0,0,0.02)] border border-card-border">
             {dashboardStats && dashboardStats.recent_projects.length > 0 ? (
@@ -137,12 +138,12 @@ export default function DashboardPage() {
               <p className="text-sm text-[#888]">No open collaborations yet.</p>
             </div>
           )}
-          <a
-            href="#"
+          <Link
+            to="/explore"
             className="block text-center text-sm text-primary font-semibold mt-5 pb-2.5 no-underline hover:underline"
           >
             Explore More Opportunities
-          </a>
+          </Link>
         </div>
       </div>
     </DashboardLayout>

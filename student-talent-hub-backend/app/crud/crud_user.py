@@ -29,14 +29,20 @@ async def get_user_by_id(db: AsyncSession, user_id: int):
     result = await db.execute(select(User).where(User.id == user_id))
     return result.scalars().first()
 
-async def get_users(db: AsyncSession, major: Optional[str] = None, skill_id: Optional[int] = None):
-    query = select(User)
+async def get_users(db: AsyncSession, major: Optional[str] = None, skill_id: Optional[int] = None, proficiency_level: Optional[str] = None):
+    query = select(User).where(User.role == "student", User.status == "active")
     if major:
         query = query.where(User.major.ilike(f"%{major}%"))
     if skill_id:
         query = query.where(
             User.id.in_(
                 select(UserSkill.user_id).where(UserSkill.skill_id == skill_id)
+            )
+        )
+    if proficiency_level:
+        query = query.where(
+            User.id.in_(
+                select(UserSkill.user_id).where(UserSkill.proficiency_level == proficiency_level)
             )
         )
     result = await db.execute(query)

@@ -70,6 +70,7 @@ async def recruiter_dashboard(
 async def recruiter_list_students(
     major: Optional[str] = None,
     skill_id: Optional[int] = None,
+    proficiency_level: Optional[str] = None,
     db: AsyncSession = Depends(get_db),
     recruiter: User = Depends(require_recruiter),
 ):
@@ -80,6 +81,12 @@ async def recruiter_list_students(
         query = query.where(
             User.id.in_(
                 select(UserSkill.user_id).where(UserSkill.skill_id == skill_id)
+            )
+        )
+    if proficiency_level:
+        query = query.where(
+            User.id.in_(
+                select(UserSkill.user_id).where(UserSkill.proficiency_level == proficiency_level)
             )
         )
     result = await db.execute(query.order_by(User.name))
@@ -105,6 +112,8 @@ async def recruiter_list_students(
             "major": s.major,
             "role": s.role,
             "status": s.status,
+            "bio": s.bio,
+            "profile_picture": s.profile_picture,
             "is_saved": s.id in saved_ids,
         })
     return result_list

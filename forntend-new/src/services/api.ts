@@ -16,7 +16,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    if (err.response?.status === 401 && !err.config?.url?.includes("/login")) {
       localStorage.removeItem("token");
       window.location.href = "/login";
     }
@@ -59,6 +59,8 @@ export const projectApi = {
   }) => api.post(`/projects/${data.project_id}/contributors`, { user_id: data.user_id, role: data.role }),
   getContributors: (projectId: number) =>
     api.get(`/projects/${projectId}/contributors`),
+  removeContributor: (projectId: number, contributorId: number) =>
+    api.delete(`/projects/${projectId}/contributors/${contributorId}`),
 };
 
 export const skillApi = {

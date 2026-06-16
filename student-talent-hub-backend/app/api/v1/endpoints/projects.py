@@ -5,7 +5,7 @@ from typing import List, Optional
 from app.api.dependencies import get_db, get_current_user
 from app.schemas.project import (
     ProjectCreate, ProjectUpdate, ProjectResponse, ProjectDetailResponse,
-    ContributorCreate, ContributorResponse,
+    ContributorCreate, ContributorResponse, ContributorWithUserResponse,
     CollaborationRequestCreate, CollaborationRequestResponse, CollaborationRequestUpdate,
 )
 from app.crud import crud_project, crud_collaboration_request
@@ -98,6 +98,30 @@ async def add_contributor(
         
     return await crud_project.create_contributor(db=db, project_id=project_id, contrib=contrib)
 
+@router.get("/{project_id}/contributors", response_model=List[ContributorWithUserResponse])
+async def read_project_contributors(
+    project_id: int,
+    db: AsyncSession = Depends(get_db),
+):
+    return await crud_project.get_project_contributors(db, project_id)
+
+@router.delete("/{project_id}/contributors/{contributor_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def remove_contributor(
+    project_id: int,
+    contributor_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    project = await crud_project.get_project_by_id(db=db, project_id=project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    if project.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the project owner can remove contributors")
+
+    deleted = await crud_project.delete_contributor(db, contributor_id)
+    if deleted is None:
+        raise HTTPException(status_code=404, detail="Contributor not found")
+
 @router.post("/{project_id}/requests", response_model=CollaborationRequestResponse, status_code=status.HTTP_201_CREATED)
 async def send_collaboration_request(
     project_id: int,
@@ -115,6 +139,10 @@ async def send_collaboration_request(
         raise HTTPException(status_code=400, detail="You cannot request to collaborate on your own project")
     if not project.is_open:
         raise HTTPException(status_code=400, detail="This project is not open for collaboration")
+
+    existing_contrib = await crud_project.get_contributor_by_user_and_project(db, current_user.id, project_id)
+    if existing_contrib:
+        raise HTTPException(status_code=400, detail="You are already a contributor of this project")
 
     existing = await crud_collaboration_request.get_pending_request(db, project_id, current_user.id)
     if existing:
@@ -195,22 +223,30 @@ async def update_collaboration_request(
 
     await crud_collaboration_request.update_request_status(db, db_req, new_status)
 
+    req_id = db_req.id
+    req_project_id = db_req.project_id
+    req_requester_id = db_req.requester_id
+    req_role = db_req.role
+    req_message = db_req.message
+    req_status = getattr(db_req.status, 'value', str(db_req.status))
+    req_created_at = str(db_req.created_at) if db_req.created_at else None
+
     if new_status == "accepted":
         from app.schemas.project import ContributorCreate
         await crud_project.create_contributor(
             db=db,
             project_id=project_id,
-            contrib=ContributorCreate(user_id=db_req.requester_id, role=db_req.role),
+            contrib=ContributorCreate(user_id=req_requester_id, role=req_role),
         )
 
     return CollaborationRequestResponse(
-        id=db_req.id,
-        project_id=db_req.project_id,
-        requester_id=db_req.requester_id,
-        role=db_req.role,
-        message=db_req.message,
-        status=getattr(db_req.status, 'value', str(db_req.status)),
-        created_at=str(db_req.created_at) if db_req.created_at else None,
+        id=req_id,
+        project_id=req_project_id,
+        requester_id=req_requester_id,
+        role=req_role,
+        message=req_message,
+        status=req_status,
+        created_at=req_created_at,
         requester_name=requester_name,
         requester_nim=requester_nim,
     )

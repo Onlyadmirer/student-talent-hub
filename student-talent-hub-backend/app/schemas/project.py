@@ -1,6 +1,15 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+
+class NestedUser(BaseModel):
+    id: int
+    name: str
+    profile_picture: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
 class ProjectCreateBase(BaseModel):
     title: str
     description: str
@@ -34,6 +43,12 @@ class ContributorResponse(ContributorCreateBase):
     user_name: str = ""
     
     class Config: 
+        from_attributes = True
+
+class ContributorWithUserResponse(ContributorResponse):
+    user: Optional[NestedUser] = None
+
+    class Config:
         from_attributes = True
 
 class ProjectUpdate(BaseModel):

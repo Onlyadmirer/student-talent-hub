@@ -14,7 +14,6 @@ export default function UploadProjectPage() {
   const [coverImage, setCoverImage] = useState("");
   const [techStack, setTechStack] = useState("");
   const [isOpen, setIsOpen] = useState(true);
-  const [status, setStatus] = useState("published");
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async () => {
@@ -138,18 +137,7 @@ export default function UploadProjectPage() {
                 <option value="closed">Closed</option>
               </select>
             </div>
-            <div className="mb-6">
-              <label className="block text-[0.8rem] font-semibold text-[#333] mb-2.5">Visibility</label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full p-3.5 border border-[#eaeaea] rounded-lg text-[0.9rem] outline-none bg-white"
-              >
-                <option value="published">Published</option>
-                <option value="hidden">Hidden</option>
-              </select>
-            </div>
-
+            
             <div className="bg-[#e0fdf4] rounded-lg p-5 border border-[#ccfbf1] mt-2.5">
               <div className="flex items-center gap-2 text-primary font-semibold text-[0.85rem] mb-2">
                 <Info size={18} /> Pro Tip

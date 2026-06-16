@@ -32,11 +32,38 @@ async def get_project_by_id(db: AsyncSession, project_id: int):
     result = await db.execute(query)
     return result.scalar_one_or_none()
 
+async def get_contributor_by_user_and_project(db: AsyncSession, user_id: int, project_id: int):
+    result = await db.execute(
+        select(ProjectContributor).where(
+            ProjectContributor.user_id == user_id,
+            ProjectContributor.project_id == project_id
+        )
+    )
+    return result.scalar_one_or_none()
+
 async def create_contributor(db: AsyncSession, project_id: int, contrib: ContributorCreate):
     db_contrib = ProjectContributor(project_id=project_id, **contrib.model_dump())
     db.add(db_contrib)
     await db.commit()
     await db.refresh(db_contrib)
+    return db_contrib
+
+async def get_project_contributors(db: AsyncSession, project_id: int):
+    result = await db.execute(
+        select(ProjectContributor)
+        .options(selectinload(ProjectContributor.user))
+        .where(ProjectContributor.project_id == project_id)
+    )
+    return result.scalars().all()
+
+async def delete_contributor(db: AsyncSession, contributor_id: int):
+    result = await db.execute(
+        select(ProjectContributor).where(ProjectContributor.id == contributor_id)
+    )
+    db_contrib = result.scalar_one_or_none()
+    if db_contrib:
+        await db.delete(db_contrib)
+        await db.commit()
     return db_contrib
 
 async def get_user_projects(db: AsyncSession, owner_id: int):

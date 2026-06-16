@@ -128,10 +128,9 @@ async def read_user_by_nim(
 async def read_users(
     major: Optional[str] = Query(None, description="Filter by major"),
     skill_id: Optional[int] = Query(None, description="Filter by skill ID"),
+    proficiency_level: Optional[str] = Query(None, description="Filter by proficiency level"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-    users = await crud_user.get_users(db, major=major, skill_id=skill_id)
+    users = await crud_user.get_users(db, major=major, skill_id=skill_id, proficiency_level=proficiency_level)
     return users
