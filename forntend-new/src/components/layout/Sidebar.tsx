@@ -1,4 +1,4 @@
-import { SquaresFour, User, FolderSimple, Compass, SignOut } from '@phosphor-icons/react'
+import { SquaresFour, User, FolderSimple, Compass, Handshake, Shield, SignOut } from '@phosphor-icons/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.tsx'
 
@@ -7,18 +7,31 @@ export default function Sidebar() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
 
-  const menuItems = [
-    { label: 'Dashboard', icon: SquaresFour, path: '/dashboard' },
-    { label: 'My Profile', icon: User, path: '/profile' },
-    ...(user?.role === 'student'
-      ? [{ label: 'My Projects', icon: FolderSimple, path: '/projects' }]
-      : []),
-    { label: 'Explore', icon: Compass, path: '/explore' },
-  ]
+  const isAdmin = user?.role === 'admin'
+  const isStudent = user?.role === 'student'
+
+  const menuItems = isAdmin
+    ? [
+        { label: 'Admin Panel', icon: Shield, path: '/admin' },
+        { label: 'My Profile', icon: User, path: '/profile' },
+        { label: 'Explore', icon: Compass, path: '/explore' },
+      ]
+    : [
+        { label: 'Dashboard', icon: SquaresFour, path: '/dashboard' },
+        { label: 'My Profile', icon: User, path: '/profile' },
+        ...(isStudent
+          ? [
+              { label: 'My Projects', icon: FolderSimple, path: '/projects' },
+              { label: 'My Requests', icon: Handshake, path: '/my-requests' },
+            ]
+          : []),
+        { label: 'Explore', icon: Compass, path: '/explore' },
+      ]
 
   const isActivePath = (path: string) => {
     if (path === '/profile') return location.pathname.startsWith('/profile')
     if (path === '/projects') return location.pathname === '/projects'
+    if (path === '/admin') return location.pathname.startsWith('/admin')
     return location.pathname === path
   }
 
