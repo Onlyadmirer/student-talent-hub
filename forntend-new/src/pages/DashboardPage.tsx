@@ -128,6 +128,7 @@ export default function DashboardPage() {
               .map((p) => (
                 <CollabCard
                   key={p.id}
+                  id={p.id}
                   title={p.title}
                   description={p.description}
                   avatarCount={1}

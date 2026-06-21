@@ -15,16 +15,6 @@ DELETE FROM user_skills;
 DELETE FROM users;
 DELETE FROM skill_categories;
 
--- Reset sequence IDs
-ALTER SEQUENCE skill_categories_id_seq RESTART WITH 1;
-ALTER SEQUENCE users_id_seq RESTART WITH 1;
-ALTER SEQUENCE user_skills_id_seq RESTART WITH 1;
-ALTER SEQUENCE projects_id_seq RESTART WITH 1;
-ALTER SEQUENCE project_contributors_id_seq RESTART WITH 1;
-ALTER SEQUENCE endorsements_id_seq RESTART WITH 1;
-ALTER SEQUENCE collaboration_requests_id_seq RESTART WITH 1;
-ALTER SEQUENCE saved_students_id_seq RESTART WITH 1;
-
 -- =====================================================
 -- 1. SKILL CATEGORIES
 -- =====================================================
@@ -215,3 +205,15 @@ INSERT INTO saved_students (id, recruiter_id, student_id, created_at) VALUES
 (2, 8, 5, NOW() - INTERVAL '8 days'),
 (3, 9, 3, NOW() - INTERVAL '5 days'),
 (4, 9, 6, NOW() - INTERVAL '2 days');
+
+-- =====================================================
+-- SYNC SEQUENCES (harus setelah insert agar nextval lanjut dari max id)
+-- =====================================================
+SELECT setval('skill_categories_id_seq',       COALESCE((SELECT MAX(id) FROM skill_categories),       0) + 1, false);
+SELECT setval('users_id_seq',                  COALESCE((SELECT MAX(id) FROM users),                  0) + 1, false);
+SELECT setval('user_skills_id_seq',            COALESCE((SELECT MAX(id) FROM user_skills),            0) + 1, false);
+SELECT setval('projects_id_seq',               COALESCE((SELECT MAX(id) FROM projects),               0) + 1, false);
+SELECT setval('project_contributors_id_seq',   COALESCE((SELECT MAX(id) FROM project_contributors),   0) + 1, false);
+SELECT setval('endorsements_id_seq',           COALESCE((SELECT MAX(id) FROM endorsements),           0) + 1, false);
+SELECT setval('collaboration_requests_id_seq', COALESCE((SELECT MAX(id) FROM collaboration_requests), 0) + 1, false);
+SELECT setval('saved_students_id_seq',         COALESCE((SELECT MAX(id) FROM saved_students),         0) + 1, false);

@@ -11,6 +11,7 @@ async def create_project(db: AsyncSession, project: ProjectCreate, owner_id: int
     db.add(db_project)
     await db.commit()
     await db.refresh(db_project)
+    await db.refresh(db_project, ["owner"])
     return db_project
 
 async def get_projects(db: AsyncSession, is_open: Optional[bool] = None):
@@ -81,6 +82,7 @@ async def update_project(db: AsyncSession, project: Project, update_data: dict):
             setattr(project, field, value)
     await db.commit()
     await db.refresh(project)
+    await db.refresh(project, ["owner"])
     return project
 
 async def delete_project(db: AsyncSession, project: Project):

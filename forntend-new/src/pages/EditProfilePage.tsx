@@ -17,6 +17,7 @@ export default function EditProfilePage() {
   const [major, setMajor] = useState('')
   const [bio, setBio] = useState('')
   const [profilePicture, setProfilePicture] = useState('')
+  const [profileFile, setProfileFile] = useState<File | null>(null)
   const [skills, setSkills] = useState<UserSkill[]>([])
   const [showAddSkill, setShowAddSkill] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -36,15 +37,25 @@ export default function EditProfilePage() {
     }
   }, [user])
 
+  const handleProfileFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setProfileFile(file)
+      setProfilePicture(URL.createObjectURL(file))
+    }
+  }
+
   const handleSave = async () => {
     setSaving(true)
     try {
+      if (profileFile) {
+        await userApi.uploadProfilePicture(profileFile)
+      }
       await userApi.updateProfile({
         name,
         major,
         nim,
         bio: bio || null,
-        profile_picture: profilePicture || null,
       })
       await refreshUser()
       navigate('/profile')
@@ -79,7 +90,7 @@ export default function EditProfilePage() {
         <div className="bg-white rounded-2xl p-10 mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
           <div className="flex gap-5 mb-5 max-md:flex-col">
             <div className="flex-1">
-              <label className="block text-[0.75rem] font-bold text-[#555] uppercase tracking-wide mb-2">Profile Picture URL</label>
+              <label className="block text-[0.75rem] font-bold text-[#555] uppercase tracking-wide mb-2">Profile Picture</label>
               <div className="flex items-center gap-4 mb-3">
                 <img
                   src={profilePicture || PLACEHOLDER_AVATAR}
@@ -88,11 +99,10 @@ export default function EditProfilePage() {
                   onError={imgErrorHandler}
                 />
                 <input
-                  type="text"
-                  value={profilePicture}
-                  onChange={(e) => setProfilePicture(e.target.value)}
-                  placeholder="https://example.com/avatar.jpg"
-                  className="flex-1 p-3.5 border border-[#e5e7eb] rounded-lg text-[0.9rem] text-[#333] outline-none"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfileFileChange}
+                  className="flex-1 p-3 border border-[#e5e7eb] rounded-lg text-[0.9rem] text-[#333] outline-none file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[0.85rem] file:font-semibold file:bg-primary file:text-white cursor-pointer"
                 />
               </div>
             </div>

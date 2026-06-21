@@ -14,6 +14,10 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5173",
     ]
 
+    UPLOAD_DIR: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "database-gambar")
+    MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024  # 5 MB
+    ALLOWED_EXTENSIONS: set = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+
     class Config:
         env_file = ".env"
 

@@ -14,6 +14,8 @@ class EndorsementResponse(BaseModel):
     skill_id: Optional[int] = None
     project_id: Optional[int] = None
     message: str
+    from_user_name: str = ""
+    from_user_profile_picture: Optional[str] = None
     
     class Config:
         from_attributes = True

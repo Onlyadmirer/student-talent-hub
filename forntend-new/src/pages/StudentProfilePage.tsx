@@ -4,7 +4,7 @@ import { ArrowLeft, SealCheck, PaperPlaneRight } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { userApi, skillApi, endorsementApi } from "../services/api.ts";
 import { PLACEHOLDER_AVATAR, imgErrorHandler } from "../types/index.ts";
-import type { User, SkillCategory } from "../types/index.ts";
+import type { User, SkillCategory, EndorsementWithUser } from "../types/index.ts";
 
 export default function StudentProfilePage() {
   const { id } = useParams();
@@ -15,12 +15,14 @@ export default function StudentProfilePage() {
   const [selectedSkill, setSelectedSkill] = useState("");
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const [endorsements, setEndorsements] = useState<EndorsementWithUser[]>([]);
 
   useEffect(() => {
     if (!id) return;
     userApi.getById(Number(id)).then((res) => setStudent(res.data)).catch(() => navigate("/explore"));
     skillApi.getByUser(Number(id)).then((res) => setSkills(res.data)).catch(() => {});
     skillApi.getCategories().then((res) => setAllSkills(res.data)).catch(() => {});
+    endorsementApi.getByUser(Number(id)).then((res) => setEndorsements(res.data)).catch(() => {});
   }, [id]);
 
   const handleEndorse = async () => {
@@ -35,6 +37,7 @@ export default function StudentProfilePage() {
       });
       setMessage("");
       setSelectedSkill("");
+      if (id) endorsementApi.getByUser(Number(id)).then((res) => setEndorsements(res.data));
     } catch {}
     setSending(false);
   };
@@ -142,6 +145,36 @@ export default function StudentProfilePage() {
             </button>
           </div>
         </div>
+
+        {endorsements.length > 0 && (
+          <div className="bg-white rounded-2xl p-8 shadow-sm mb-7">
+            <div className="flex items-center gap-3 mb-5">
+              <SealCheck size={24} className="text-primary" />
+              <h2 className="text-[1.25rem] font-bold text-primary">Endorsements Received</h2>
+              <span className="bg-[#a7f3d0] text-[#047857] px-3 py-1 rounded-full text-[0.75rem] font-bold">
+                {endorsements.length}
+              </span>
+            </div>
+            <div className="space-y-4">
+              {endorsements.map((e) => (
+                <div key={e.id} className="flex gap-4 p-4 bg-[#f9fafb] rounded-xl">
+                  <img
+                    src={e.from_user_profile_picture || PLACEHOLDER_AVATAR}
+                    className="w-[40px] h-[40px] rounded-full object-cover flex-shrink-0"
+                    alt=""
+                    onError={imgErrorHandler}
+                  />
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start mb-1">
+                      <h4 className="text-[0.9rem] font-semibold text-[#111]">{e.from_user_name || `User #${e.from_user_id}`}</h4>
+                    </div>
+                    <p className="text-[0.85rem] text-[#555] leading-relaxed">&ldquo;{e.message}&rdquo;</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

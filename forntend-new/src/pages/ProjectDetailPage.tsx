@@ -4,7 +4,7 @@ import { ArrowLeft, PencilSimple, Trash, UserPlus, Code, Palette, Star, Handshak
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { useAuth } from "../context/AuthContext.tsx";
 import { projectApi, requestApi } from "../services/api.ts";
-import { PLACEHOLDER_AVATAR, PLACEHOLDER_COVER, coverErrorHandler } from "../types/index.ts";
+import { PLACEHOLDER_AVATAR, PLACEHOLDER_COVER, coverErrorHandler, imgErrorHandler } from "../types/index.ts";
 import ConfirmModal from "../components/ui/ConfirmModal.tsx";
 import type { ContributorWithUser, CollaborationRequest } from "../types/index.ts";
 
@@ -124,9 +124,10 @@ export default function ProjectDetailPage() {
                 className="flex items-center gap-2 text-[0.85rem] font-semibold text-[#555] cursor-pointer hover:text-primary transition-colors"
               >
                 <img
-                  src={PLACEHOLDER_AVATAR}
+                  src={project.owner_profile_picture || PLACEHOLDER_AVATAR}
                   className="rounded-full w-[25px] h-[25px] object-cover"
                   alt=""
+                  onError={imgErrorHandler}
                 />
                 By {ownerName}
               </div>
@@ -316,9 +317,10 @@ export default function ProjectDetailPage() {
                 <h3 className="text-[0.7rem] font-bold text-[#888] uppercase tracking-wide mb-3.5">Project Team</h3>
                 <div className="flex items-center gap-3.5 mb-4">
                   <img
-                    src={PLACEHOLDER_AVATAR}
+                    src={project.owner_profile_picture || PLACEHOLDER_AVATAR}
                     className="w-[40px] h-[40px] rounded-full object-cover"
                     alt=""
+                    onError={imgErrorHandler}
                   />
                   <div>
                     <h4 className="text-[0.9rem] font-semibold text-[#111]">{project.owner_name || "Owner"}</h4>
@@ -328,9 +330,10 @@ export default function ProjectDetailPage() {
                 {contributors.map((c) => (
                   <div key={c.id} className="flex items-center gap-3.5 mb-4 last:mb-0">
                     <img
-                      src={PLACEHOLDER_AVATAR}
+                      src={c.user?.profile_picture || PLACEHOLDER_AVATAR}
                       className="w-[40px] h-[40px] rounded-full object-cover"
                       alt=""
+                      onError={imgErrorHandler}
                     />
                     <div>
                       <h4 className="text-[0.9rem] font-semibold text-[#111]">{c.user_name || `User #${c.user_id}`}</h4>

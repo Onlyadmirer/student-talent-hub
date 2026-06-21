@@ -81,6 +81,7 @@ class CollaborationRequestUpdate(BaseModel):
 class ProjectDetailResponse(ProjectResponse):
     contributors: List[ContributorResponse] = []
     owner_name: str = ""
+    owner_profile_picture: Optional[str] = None
     
     class Config: 
         from_attributes = True

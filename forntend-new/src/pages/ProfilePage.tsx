@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, GraduationCap, Camera, PencilSimple, Quotes } from '@phosphor-icons/react'
+import { MapPin, GraduationCap, Camera, PencilSimple, Quotes, SealCheck } from '@phosphor-icons/react'
 import DashboardLayout from '../components/layout/DashboardLayout.tsx'
 import { useAuth } from '../context/AuthContext.tsx'
-import { skillApi } from '../services/api.ts'
+import { skillApi, endorsementApi } from '../services/api.ts'
 import AddSkillModal from '../components/ui/AddSkillModal.tsx'
-import type { UserSkill } from '../types/index.ts'
+import type { UserSkill, EndorsementWithUser } from '../types/index.ts'
 import { PLACEHOLDER_AVATAR, imgErrorHandler } from '../types/index.ts'
 
 export default function ProfilePage() {
@@ -13,6 +13,7 @@ export default function ProfilePage() {
   const navigate = useNavigate()
   const [skills, setSkills] = useState<UserSkill[]>([])
   const [showAddSkill, setShowAddSkill] = useState(false)
+  const [endorsements, setEndorsements] = useState<EndorsementWithUser[]>([])
 
   const fetchSkills = () => {
     skillApi.getMySkills()
@@ -22,6 +23,14 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user?.role === 'student') fetchSkills()
+  }, [user])
+
+  useEffect(() => {
+    if (user?.id) {
+      endorsementApi.getByUser(user.id)
+        .then((res) => setEndorsements(res.data))
+        .catch(() => {})
+    }
   }, [user])
 
   const levelLabel = (level: string) => level.charAt(0).toUpperCase() + level.slice(1)
@@ -119,6 +128,36 @@ export default function ProfilePage() {
               ) : (
                 <p className="text-[#888] text-sm">No skills added yet.</p>
               )}
+            </div>
+          </div>
+        )}
+
+        {user?.role === 'student' && endorsements.length > 0 && (
+          <div className="bg-white rounded-2xl p-10 w-full mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+            <div className="flex items-center gap-3 mb-5">
+              <SealCheck size={24} className="text-primary" />
+              <h2 className="text-[1.2rem] font-semibold text-primary">My Endorsements</h2>
+              <span className="bg-[#a7f3d0] text-[#047857] px-3 py-1 rounded-full text-[0.75rem] font-bold">
+                {endorsements.length}
+              </span>
+            </div>
+            <div className="space-y-4">
+              {endorsements.map((e) => (
+                <div key={e.id} className="flex gap-4 p-4 bg-[#f9fafb] rounded-xl">
+                  <img
+                    src={e.from_user_profile_picture || PLACEHOLDER_AVATAR}
+                    className="w-[40px] h-[40px] rounded-full object-cover flex-shrink-0"
+                    alt=""
+                    onError={imgErrorHandler}
+                  />
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start mb-1">
+                      <h4 className="text-[0.9rem] font-semibold text-[#111]">{e.from_user_name || `User #${e.from_user_id}`}</h4>
+                    </div>
+                    <p className="text-[0.85rem] text-[#555] leading-relaxed">&ldquo;{e.message}&rdquo;</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}

@@ -17,9 +17,18 @@ export default function EditProjectPage() {
   const [githubLink, setGithubLink] = useState("");
   const [demoLink, setDemoLink] = useState("");
   const [coverImage, setCoverImage] = useState("");
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [techStack, setTechStack] = useState("");
   const [isOpen, setIsOpen] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverFile(file);
+      setCoverImage(URL.createObjectURL(file));
+    }
+  };
 
   const [newCollabNim, setNewCollabNim] = useState("");
   const [newCollabRole, setNewCollabRole] = useState("");
@@ -57,12 +66,14 @@ export default function EditProjectPage() {
     if (!id || !title || !description) return;
     setSaving(true);
     try {
+      if (coverFile) {
+        await projectApi.uploadThumbnail(Number(id), coverFile);
+      }
       await projectApi.update(Number(id), {
         title,
         description,
         github_link: githubLink || null,
         figma_link: demoLink || null,
-        thumbnail_url: coverImage || null,
         is_open: isOpen,
       });
       navigate(`/projects/${id}`);
@@ -151,7 +162,7 @@ export default function EditProjectPage() {
             </div>
             <div>
               <div className="mb-6">
-                <label className="block text-[0.75rem] font-bold text-[#333] mb-2.5">Cover Image URL</label>
+                <label className="block text-[0.75rem] font-bold text-[#333] mb-2.5">Cover Image</label>
                 <img
                   src={coverImage || PLACEHOLDER_COVER}
                   alt="Cover Preview"
@@ -159,11 +170,10 @@ export default function EditProjectPage() {
                   onError={coverErrorHandler}
                 />
                 <input
-                  type="text"
-                  value={coverImage}
-                  onChange={(e) => setCoverImage(e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  className="w-full p-3.5 border border-[#eaeaea] rounded-lg text-[0.9rem] outline-none"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverFileChange}
+                  className="w-full p-3.5 text-[0.9rem] outline-none file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[0.85rem] file:font-semibold file:bg-primary file:text-white cursor-pointer"
                 />
               </div>
               <div className="mb-6">

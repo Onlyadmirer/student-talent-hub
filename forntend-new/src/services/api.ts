@@ -39,6 +39,13 @@ export const authApi = {
 export const userApi = {
   updateProfile: (data: Record<string, unknown>) =>
     api.patch("/users/me", data),
+  uploadProfilePicture: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/users/me/profile-picture", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
   getDashboardStats: () => api.get("/users/me/dashboard-stats"),
   getAll: (params?: Record<string, unknown>) => api.get("/users/", { params }),
   getById: (id: number) => api.get(`/users/${id}`),
@@ -51,6 +58,13 @@ export const projectApi = {
   create: (data: Record<string, unknown>) => api.post("/projects/", data),
   update: (id: number, data: Record<string, unknown>) =>
     api.patch(`/projects/${id}`, data),
+  uploadThumbnail: (id: number, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post(`/projects/${id}/thumbnail`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
   delete: (id: number) => api.delete(`/projects/${id}`),
   addContributor: (data: {
     user_id: number;
@@ -79,6 +93,8 @@ export const endorsementApi = {
   getAll: () => api.get("/endorsements/"),
   getByProject: (projectId: number) =>
     api.get(`/endorsements/?project_id=${projectId}`),
+  getByUser: (userId: number) =>
+    api.get(`/endorsements/?user_id=${userId}`),
   create: (data: Record<string, unknown>) =>
     api.post("/endorsements/", data),
 };

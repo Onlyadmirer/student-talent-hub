@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+import os
+import uuid
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 
 from app.api.dependencies import get_db, get_current_user
+from app.core.config import settings
 from app.schemas.project import (
     ProjectCreate, ProjectUpdate, ProjectResponse, ProjectDetailResponse,
     ContributorCreate, ContributorResponse, ContributorWithUserResponse,
@@ -10,6 +13,7 @@ from app.schemas.project import (
 )
 from app.crud import crud_project, crud_collaboration_request
 from app.models.user import User
+from app.models.project import Project
 from app.models.collaboration_request import RequestStatus
 
 router = APIRouter()
@@ -47,7 +51,21 @@ async def read_project_detail(
     project = await crud_project.get_project_by_id(db=db, project_id=project_id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
-    return project
+    owner_profile_picture = project.owner.profile_picture if project.owner else None
+    return ProjectDetailResponse(
+        id=project.id,
+        title=project.title,
+        description=project.description,
+        github_link=project.github_link,
+        figma_link=project.figma_link,
+        thumbnail_url=project.thumbnail_url,
+        is_open=project.is_open,
+        status=project.status,
+        owner_id=project.owner_id,
+        owner_name=project.owner_name,
+        owner_profile_picture=owner_profile_picture,
+        contributors=project.contributors,
+    )
 
 @router.patch("/{project_id}", response_model=ProjectResponse)
 async def update_project(
@@ -67,6 +85,44 @@ async def update_project(
         raise HTTPException(status_code=400, detail="No fields to update")
 
     return await crud_project.update_project(db=db, project=project, update_data=filtered)
+
+@router.post("/{project_id}/thumbnail", response_model=ProjectResponse)
+async def upload_project_thumbnail(
+    project_id: int,
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    project = await crud_project.get_project_by_id(db=db, project_id=project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    if project.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the project owner can update the thumbnail")
+
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in settings.ALLOWED_EXTENSIONS:
+        raise HTTPException(status_code=400, detail=f"File type {ext} not allowed. Allowed: {', '.join(settings.ALLOWED_EXTENSIONS)}")
+
+    contents = await file.read()
+    if len(contents) > settings.MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=400, detail=f"File too large. Max size: {settings.MAX_UPLOAD_SIZE // (1024*1024)}MB")
+
+    filename = f"{uuid.uuid4().hex}{ext}"
+    upload_path = os.path.join(settings.UPLOAD_DIR, "thumbnails", filename)
+
+    with open(upload_path, "wb") as f:
+        f.write(contents)
+
+    old_file = project.thumbnail_url
+    if old_file and old_file.startswith("/database-gambar/thumbnails/"):
+        old_path = os.path.join(settings.UPLOAD_DIR, old_file.replace("/database-gambar/", ""))
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+    project.thumbnail_url = f"/database-gambar/thumbnails/{filename}"
+    await db.commit()
+    await db.refresh(project)
+    return project
 
 @router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_project(

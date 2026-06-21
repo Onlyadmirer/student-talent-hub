@@ -1,5 +1,7 @@
+import os
+import uuid
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,6 +9,7 @@ from sqlalchemy.future import select
 
 from app.api.dependencies import get_db, get_current_user
 from app.core.security import verify_password, create_access_token
+from app.core.config import settings
 from app.crud import crud_user
 from app.schemas.user import UserCreate, UserUpdate, UserResponse, Token
 from app.schemas.dashboard import DashboardSummaryResponse
@@ -67,6 +70,37 @@ async def update_user_me(
 
     updated = await crud_user.update_user(db, current_user, filtered)
     return updated
+
+@router.post("/me/profile-picture", response_model=UserResponse)
+async def upload_profile_picture(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in settings.ALLOWED_EXTENSIONS:
+        raise HTTPException(status_code=400, detail=f"File type {ext} not allowed. Allowed: {', '.join(settings.ALLOWED_EXTENSIONS)}")
+
+    contents = await file.read()
+    if len(contents) > settings.MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=400, detail=f"File too large. Max size: {settings.MAX_UPLOAD_SIZE // (1024*1024)}MB")
+
+    filename = f"{uuid.uuid4().hex}{ext}"
+    upload_path = os.path.join(settings.UPLOAD_DIR, "profiles", filename)
+
+    with open(upload_path, "wb") as f:
+        f.write(contents)
+
+    old_file = current_user.profile_picture
+    if old_file and old_file.startswith("/database-gambar/profiles/"):
+        old_path = os.path.join(settings.UPLOAD_DIR, old_file.replace("/database-gambar/", ""))
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+    current_user.profile_picture = f"/database-gambar/profiles/{filename}"
+    await db.commit()
+    await db.refresh(current_user)
+    return current_user
 
 @router.get("/{user_id}", response_model=UserResponse)
 async def read_user_by_id(

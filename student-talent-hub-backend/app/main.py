@@ -1,5 +1,7 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.api.v1.router import api_router
 from app.db.database import engine
 from app.db.base import Base
@@ -23,6 +25,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Sajikan folder database-gambar sebagai static files
+os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+os.makedirs(os.path.join(settings.UPLOAD_DIR, "profiles"), exist_ok=True)
+os.makedirs(os.path.join(settings.UPLOAD_DIR, "thumbnails"), exist_ok=True)
+app.mount("/database-gambar", StaticFiles(directory=settings.UPLOAD_DIR), name="database-gambar")
 
 app.include_router(api_router, prefix="/api")
 

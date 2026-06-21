@@ -11,25 +11,61 @@ export default function UploadProjectPage() {
   const [description, setDescription] = useState("");
   const [githubLink, setGithubLink] = useState("");
   const [demoLink, setDemoLink] = useState("");
-  const [coverImage, setCoverImage] = useState("");
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState("");
   const [techStack, setTechStack] = useState("");
   const [isOpen, setIsOpen] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setGithubLink("");
+    setDemoLink("");
+    setCoverFile(null);
+    setCoverPreview("");
+    setTechStack("");
+    setIsOpen(true);
+    setError("");
+  };
+
+  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError("File too large. Max size: 5MB");
+        e.target.value = "";
+        return;
+      }
+      setCoverFile(file);
+      setCoverPreview(URL.createObjectURL(file));
+      setError("");
+    }
+  };
 
   const handleSubmit = async () => {
     if (!title || !description) return;
     setSaving(true);
+    setError("");
     try {
-      await projectApi.create({
+      const res = await projectApi.create({
         title,
         description,
         github_link: githubLink || null,
         figma_link: demoLink || null,
-        thumbnail_url: coverImage || null,
+        thumbnail_url: null,
         is_open: isOpen,
       });
-      navigate("/projects");
-    } catch {
+      const projectId = res.data.id;
+      if (coverFile && projectId) {
+        await projectApi.uploadThumbnail(projectId, coverFile);
+      }
+      resetForm();
+      navigate("/projects", { state: { uploadSuccess: true } });
+    } catch (err: any) {
+      const msg = err?.response?.data?.detail || "Failed to publish project. Please try again.";
+      setError(msg);
       setSaving(false);
     }
   };
@@ -50,6 +86,10 @@ export default function UploadProjectPage() {
         <p className="text-[#555] text-[0.95rem] mb-10">
           Share your academic and professional milestones with the global student community.
         </p>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg text-[0.85rem]">{error}</div>
+        )}
 
         <div className="grid grid-cols-[1fr_1fr] gap-10 max-md:grid-cols-1">
           <div>
@@ -108,22 +148,21 @@ export default function UploadProjectPage() {
 
           <div>
             <div className="mb-6">
-              <label className="block text-[0.8rem] font-semibold text-[#333] mb-2.5">Cover Image URL</label>
+              <label className="block text-[0.8rem] font-semibold text-[#333] mb-2.5">Cover Image</label>
               <div className="border-2 border-dashed border-[#cbd5e1] rounded-xl bg-[#fafbfc] text-center p-5">
                 <img
-                  src={coverImage || PLACEHOLDER_COVER}
+                  src={coverPreview || PLACEHOLDER_COVER}
                   alt="Cover Preview"
                   className="w-full h-[180px] rounded-lg object-cover mb-3"
                   onError={coverErrorHandler}
                 />
                 <input
-                  type="text"
-                  value={coverImage}
-                  onChange={(e) => setCoverImage(e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  className="w-full p-2.5 border border-[#eaeaea] rounded-lg text-[0.8rem] outline-none"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverFileChange}
+                  className="w-full p-2.5 text-[0.8rem] outline-none file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[0.8rem] file:font-semibold file:bg-primary file:text-white cursor-pointer"
                 />
-                <p className="text-[0.7rem] text-[#555] font-medium mt-2">Recommended: 1200x630px, URL format</p>
+                <p className="text-[0.7rem] text-[#555] font-medium mt-2">Recommended: 1200x630px, max 5MB</p>
               </div>
             </div>
             <div className="mb-6">
