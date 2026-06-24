@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { X } from '@phosphor-icons/react'
+import { XIcon } from '@phosphor-icons/react'
 import { skillApi } from '../../services/api.ts'
 import type { SkillCategory } from '../../types/index.ts'
 
@@ -52,7 +52,7 @@ export default function AddSkillModal({ isOpen, onClose, onSkillAdded, existingS
         <div className="flex justify-between items-center mb-[30px]">
           <h2 className="text-[1.5rem] font-bold text-primary">Add New Skill</h2>
           <button onClick={handleClose} className="bg-none border-none text-[#555] text-lg cursor-pointer">
-            <X size={22} />
+            <XIcon size={22} />
           </button>
         </div>
 

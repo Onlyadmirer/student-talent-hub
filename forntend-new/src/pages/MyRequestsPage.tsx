@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Clock, Check, X, ArrowRight } from "@phosphor-icons/react";
+import { ClockIcon, CheckIcon, XIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { requestApi } from "../services/api.ts";
 import type { CollaborationRequest } from "../types/index.ts";
@@ -19,11 +19,11 @@ export default function MyRequestsPage() {
   const statusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <span className="bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-[0.7rem] font-bold flex items-center gap-1.5"><Clock size={12} /> Pending</span>;
+        return <span className="bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-[0.7rem] font-bold flex items-center gap-1.5"><ClockIcon size={12} /> Pending</span>;
       case "accepted":
-        return <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-[0.7rem] font-bold flex items-center gap-1.5"><Check size={12} /> Accepted</span>;
+        return <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-[0.7rem] font-bold flex items-center gap-1.5"><CheckIcon size={12} /> Accepted</span>;
       case "rejected":
-        return <span className="bg-red-50 text-red-700 px-3 py-1 rounded-full text-[0.7rem] font-bold flex items-center gap-1.5"><X size={12} /> Rejected</span>;
+        return <span className="bg-red-50 text-red-700 px-3 py-1 rounded-full text-[0.7rem] font-bold flex items-center gap-1.5"><XIcon size={12} /> Rejected</span>;
       default:
         return null;
     }
@@ -70,7 +70,7 @@ export default function MyRequestsPage() {
                   onClick={() => navigate(`/projects/${req.project_id}`)}
                   className="bg-white text-primary border border-primary px-4 py-2 rounded-lg text-[0.8rem] font-semibold flex items-center gap-1.5 cursor-pointer hover:bg-primary hover:text-white transition-colors"
                 >
-                  View Project <ArrowRight size={14} />
+                  View Project <ArrowRightIcon size={14} />
                 </button>
               </div>
             ))}

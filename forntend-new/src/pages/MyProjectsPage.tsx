@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, PlusCircle } from "@phosphor-icons/react";
+import { PlusIcon, PlusCircleIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { useAuth } from "../context/AuthContext.tsx";
 import { projectApi } from "../services/api.ts";
@@ -36,7 +36,7 @@ export default function MyProjectsPage() {
           onClick={() => navigate("/projects/new")}
           className="bg-primary text-white border-none px-5 py-3 rounded-lg font-semibold flex items-center gap-2 text-[0.9rem] cursor-pointer"
         >
-          <Plus size={18} /> Upload New Project
+          <PlusIcon size={18} /> Upload New Project
         </button>
       </div>
 
@@ -89,7 +89,7 @@ export default function MyProjectsPage() {
           onClick={() => navigate("/projects/new")}
           className="border-2 border-dashed border-[#cbd5e1] rounded-xl flex flex-col items-center justify-center min-h-[350px] cursor-pointer bg-transparent hover:bg-[#f1f5f9] hover:text-primary text-[#888] transition-colors"
         >
-          <PlusCircle size={40} className="mb-2.5" />
+          <PlusCircleIcon size={40} className="mb-2.5" />
           <span className="text-[0.9rem] font-semibold">New Project</span>
         </div>
       </div>

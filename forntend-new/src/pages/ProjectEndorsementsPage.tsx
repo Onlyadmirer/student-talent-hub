@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, PaperPlaneRight, SealCheck } from "@phosphor-icons/react";
+import { ArrowLeftIcon, PaperPlaneRightIcon, SealCheckIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { useAuth } from "../context/AuthContext.tsx";
 import { endorsementApi, projectApi } from "../services/api.ts";
@@ -53,7 +53,7 @@ export default function ProjectEndorsementsPage() {
           onClick={() => navigate(`/projects/${id}`)}
           className="flex items-center gap-1.5 text-primary text-[0.85rem] font-semibold mb-5 cursor-pointer"
         >
-          <ArrowLeft size={16} /> Back to Project
+          <ArrowLeftIcon size={16} /> Back to Project
         </div>
 
         <div className="mb-8">
@@ -85,14 +85,14 @@ export default function ProjectEndorsementsPage() {
                 disabled={!message.trim() || sending}
                 className="w-full bg-primary text-white border-none p-3.5 rounded-lg font-semibold text-[0.9rem] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                Submit Endorsement <PaperPlaneRight size={18} />
+                Submit Endorsement <PaperPlaneRightIcon size={18} />
               </button>
             </div>
           )}
 
           <div className={isOwnerOrCollaborator ? "col-span-full" : ""}>
             <div className="flex items-center gap-3 mb-8">
-              <SealCheck size={28} className="text-primary" />
+              <SealCheckIcon size={28} className="text-primary" />
               <span className="bg-[#a7f3d0] text-[#047857] px-3 py-1.5 rounded-full text-[0.75rem] font-bold">
                 {endorsements.length} Testimonial{endorsements.length !== 1 ? "s" : ""}
               </span>
@@ -109,7 +109,7 @@ export default function ProjectEndorsementsPage() {
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h4 className="text-[0.95rem] font-semibold text-[#111]">{e.from_user_name || `User #${e.from_user_id}`}</h4>
+                      <h4 className="text-[0.95rem] font-semibold text-[#111]">{e.from_user_name || `UserIcon #${e.from_user_id}`}</h4>
                       <p className="text-[0.75rem] font-bold text-[#0d9488]">Supporter</p>
                     </div>
                     <span className="text-[0.75rem] text-[#888]">

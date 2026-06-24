@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Info, RocketLaunch } from "@phosphor-icons/react";
+import { ArrowLeftIcon, InfoIcon, RocketLaunchIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { projectApi } from "../services/api.ts";
 import { PLACEHOLDER_COVER, coverErrorHandler } from "../types/index.ts";
@@ -77,7 +77,7 @@ export default function UploadProjectPage() {
           onClick={() => navigate("/projects")}
           className="flex items-center gap-1.5 text-primary text-[0.85rem] font-semibold mb-5 cursor-pointer"
         >
-          <ArrowLeft size={16} /> Back to My Projects
+          <ArrowLeftIcon size={16} /> Back to My Projects
         </div>
 
         <h1 className="font-heading text-[2.2rem] font-bold text-primary mb-1">
@@ -179,7 +179,7 @@ export default function UploadProjectPage() {
             
             <div className="bg-[#e0fdf4] rounded-lg p-5 border border-[#ccfbf1] mt-2.5">
               <div className="flex items-center gap-2 text-primary font-semibold text-[0.85rem] mb-2">
-                <Info size={18} /> Pro Tip
+                <InfoIcon size={18} /> Pro Tip
               </div>
               <p className="text-[0.75rem] text-primary font-semibold leading-relaxed">
                 Adding clear documentation and design links increases project visibility by up to 40% among recruiters.
@@ -194,7 +194,7 @@ export default function UploadProjectPage() {
             disabled={!title || !description || saving}
             className="bg-primary text-white border-none px-7 py-3.5 rounded-lg font-semibold text-base flex items-center gap-2 cursor-pointer disabled:opacity-50"
           >
-            <RocketLaunch size={20} /> {saving ? "Publishing..." : "Publish Project"}
+            <RocketLaunchIcon size={20} /> {saving ? "Publishing..." : "Publish Project"}
           </button>
         </div>
       </div>

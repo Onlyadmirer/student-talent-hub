@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, SealCheck, PaperPlaneRight } from "@phosphor-icons/react";
+import { ArrowLeftIcon, SealCheckIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { userApi, skillApi, endorsementApi } from "../services/api.ts";
 import { PLACEHOLDER_AVATAR, imgErrorHandler } from "../types/index.ts";
-import type { User, SkillCategory, EndorsementWithUser } from "../types/index.ts";
+import type { UserIcon, SkillCategory, EndorsementWithUser } from "../types/index.ts";
 
 export default function StudentProfilePage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [student, setStudent] = useState<User | null>(null);
+  const [student, setStudent] = useState<UserIcon | null>(null);
   const [skills, setSkills] = useState<SkillCategory[]>([]);
   const [allSkills, setAllSkills] = useState<SkillCategory[]>([]);
   const [selectedSkill, setSelectedSkill] = useState("");
@@ -51,7 +51,7 @@ export default function StudentProfilePage() {
           onClick={() => navigate("/explore")}
           className="flex items-center gap-1.5 text-primary text-[0.85rem] font-semibold mb-5 cursor-pointer"
         >
-          <ArrowLeft size={16} /> Back to Explore
+          <ArrowLeftIcon size={16} /> Back to Explore
         </div>
 
         <div
@@ -71,7 +71,7 @@ export default function StudentProfilePage() {
             <div>
               <h1 className="text-white text-[2.5rem] font-bold">{student.name}</h1>
               <p className="text-white/90 text-[0.95rem] font-medium">
-                {student.major || "Student"} {student.nim ? `• ${student.nim}` : ""}
+                {student.major || "StudentIcon"} {student.nim ? `• ${student.nim}` : ""}
               </p>
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function StudentProfilePage() {
 
         <div className="bg-white rounded-2xl p-8 shadow-sm mb-7">
           <h2 className="text-[1.25rem] font-bold text-primary mb-5 flex items-center gap-2.5">
-            <SealCheck size={24} /> Give Endorsement
+            <SealCheckIcon size={24} /> Give Endorsement
           </h2>
           <div className="mb-5">
             <label className="block text-[0.8rem] font-semibold text-[#333] mb-2">Related Skill</label>
@@ -141,7 +141,7 @@ export default function StudentProfilePage() {
               disabled={!selectedSkill || !message.trim() || sending}
               className="bg-primary text-white border-none px-7 py-3.5 rounded-lg font-semibold text-[0.9rem] flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              Submit Endorsement <PaperPlaneRight size={18} />
+              Submit Endorsement <PaperPlaneRightIcon size={18} />
             </button>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function StudentProfilePage() {
         {endorsements.length > 0 && (
           <div className="bg-white rounded-2xl p-8 shadow-sm mb-7">
             <div className="flex items-center gap-3 mb-5">
-              <SealCheck size={24} className="text-primary" />
+              <SealCheckIcon size={24} className="text-primary" />
               <h2 className="text-[1.25rem] font-bold text-primary">Endorsements Received</h2>
               <span className="bg-[#a7f3d0] text-[#047857] px-3 py-1 rounded-full text-[0.75rem] font-bold">
                 {endorsements.length}
@@ -166,7 +166,7 @@ export default function StudentProfilePage() {
                   />
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-1">
-                      <h4 className="text-[0.9rem] font-semibold text-[#111]">{e.from_user_name || `User #${e.from_user_id}`}</h4>
+                      <h4 className="text-[0.9rem] font-semibold text-[#111]">{e.from_user_name || `UserIcon #${e.from_user_id}`}</h4>
                     </div>
                     <p className="text-[0.85rem] text-[#555] leading-relaxed">&ldquo;{e.message}&rdquo;</p>
                   </div>

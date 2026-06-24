@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.tsx";
 import { PLACEHOLDER_AVATAR, imgErrorHandler } from "../../types/index.ts";
@@ -85,7 +85,7 @@ export default function TopNav() {
         className='flex-1 max-w-[500px] relative ml-5 max-md:hidden'
         ref={dropdownRef}
       >
-        <MagnifyingGlass
+        <MagnifyingGlassIcon
           size={18}
           className='absolute left-[15px] top-1/2 -translate-y-1/2 text-[#888]'
         />
@@ -106,7 +106,7 @@ export default function TopNav() {
             {hasUsers && (
               <div className='p-3'>
                 <p className='text-[0.65rem] font-bold text-[#888] uppercase tracking-wider px-3 mb-1'>
-                  Users
+                  UsersIcon
                 </p>
                 {results.users.map((u: SearchUserResult) => (
                   <div

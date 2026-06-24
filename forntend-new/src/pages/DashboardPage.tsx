@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import { ClipboardText, Lightning, SealCheck } from "@phosphor-icons/react";
+import { ClipboardTextIcon, LightningIcon, SealCheckIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import StatCard from "../components/ui/StatCard.tsx";
 import ProjectItem from "../components/ui/ProjectItem.tsx";
@@ -50,7 +50,7 @@ export default function DashboardPage() {
     <DashboardLayout>
       <div className="mb-8">
         <h1 className="font-heading text-[2.2rem] font-bold mb-2 text-[#333]">
-          Welcome back, {user?.name || "User"}!
+          Welcome back, {user?.name || "UserIcon"}!
         </h1>
         <p className="text-sm text-[#666]">
           Here is what's happening with your projects today.
@@ -59,21 +59,21 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-3 gap-5 mb-10 max-md:grid-cols-1">
         <StatCard
-          icon={<ClipboardText size={24} />}
+          icon={<ClipboardTextIcon size={24} />}
           iconBgClass="bg-icon-cyan-bg"
           iconColorClass="text-icon-cyan"
           value={`${dashboardStats?.total_projects ?? 0} Projects`}
           label="Active Engagements"
         />
         <StatCard
-          icon={<Lightning size={24} />}
+          icon={<LightningIcon size={24} />}
           iconBgClass="bg-icon-green-bg"
           iconColorClass="text-icon-green"
           value={`${dashboardStats?.total_skills ?? 0} Skills`}
           label="Verified Competencies"
         />
         <StatCard
-          icon={<SealCheck size={24} />}
+          icon={<SealCheckIcon size={24} />}
           iconBgClass="bg-icon-orange-bg"
           iconColorClass="text-icon-orange"
           value={`${dashboardStats?.total_endorsements ?? 0} Endorsements`}

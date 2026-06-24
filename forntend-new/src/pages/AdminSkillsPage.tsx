@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Trash, ArrowLeft } from "@phosphor-icons/react";
+import { PlusIcon, TrashIcon, ArrowLeftIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { adminApi } from "../services/api.ts";
 import type { SkillCategory } from "../types/index.ts";
@@ -56,7 +56,7 @@ export default function AdminSkillsPage() {
     <DashboardLayout>
       <div className="max-w-[800px] mx-auto w-full">
         <div className="flex items-center gap-3 mb-6">
-          <ArrowLeft size={20} className="text-primary cursor-pointer" onClick={() => window.history.back()} />
+          <ArrowLeftIcon size={20} className="text-primary cursor-pointer" onClick={() => window.history.back()} />
           <h1 className="text-[2rem] font-bold text-primary">Manage Skill Categories</h1>
         </div>
 
@@ -64,7 +64,7 @@ export default function AdminSkillsPage() {
           onClick={() => setShowForm(true)}
           className="bg-primary text-white border-none px-5 py-3 rounded-lg font-semibold flex items-center gap-2 text-[0.9rem] cursor-pointer mb-7"
         >
-          <Plus size={18} /> Add Skill Category
+          <PlusIcon size={18} /> Add Skill Category
         </button>
 
         {showForm && (
@@ -121,7 +121,7 @@ export default function AdminSkillsPage() {
                   onClick={() => setDeleteTarget(cat)}
                   className="bg-red-50 text-red-600 border-none p-2.5 rounded-lg cursor-pointer hover:bg-red-100"
                 >
-                  <Trash size={16} />
+                  <TrashIcon size={16} />
                 </button>
               </div>
             ))}

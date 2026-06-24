@@ -1,4 +1,4 @@
-import { SquaresFour, User, FolderSimple, Compass, Handshake, Shield, Bookmark, SignOut } from '@phosphor-icons/react'
+import { SquaresFourIcon, UserIcon, FolderSimpleIcon, CompassIcon, HandshakeIcon, ShieldIcon, BookmarkIcon, SignOutIcon } from '@phosphor-icons/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.tsx'
 
@@ -13,26 +13,26 @@ export default function Sidebar() {
 
   const menuItems = isAdmin
     ? [
-        { label: 'Admin Panel', icon: Shield, path: '/admin' },
-        { label: 'My Profile', icon: User, path: '/profile' },
+        { label: 'Admin Panel', icon: ShieldIcon, path: '/admin' },
+        { label: 'My Profile', icon: UserIcon, path: '/profile' },
       ]
     : isRecruiter
     ? [
-        { label: 'Dashboard', icon: SquaresFour, path: '/recruiter/dashboard' },
-        { label: 'My Profile', icon: User, path: '/profile' },
-        { label: 'Explore', icon: Compass, path: '/explore' },
-        { label: 'Saved Students', icon: Bookmark, path: '/recruiter/saved' },
+        { label: 'Dashboard', icon: SquaresFourIcon, path: '/recruiter/dashboard' },
+        { label: 'My Profile', icon: UserIcon, path: '/profile' },
+        { label: 'Explore', icon: CompassIcon, path: '/explore' },
+        { label: 'Saved Students', icon: BookmarkIcon, path: '/recruiter/saved' },
       ]
     : [
-        { label: 'Dashboard', icon: SquaresFour, path: '/dashboard' },
-        { label: 'My Profile', icon: User, path: '/profile' },
+        { label: 'Dashboard', icon: SquaresFourIcon, path: '/dashboard' },
+        { label: 'My Profile', icon: UserIcon, path: '/profile' },
         ...(isStudent
           ? [
-              { label: 'My Projects', icon: FolderSimple, path: '/projects' },
-              { label: 'My Requests', icon: Handshake, path: '/my-requests' },
+              { label: 'My Projects', icon: FolderSimpleIcon, path: '/projects' },
+              { label: 'My Requests', icon: HandshakeIcon, path: '/my-requests' },
             ]
           : []),
-        { label: 'Explore', icon: Compass, path: '/explore' },
+        { label: 'Explore', icon: CompassIcon, path: '/explore' },
       ]
 
   const isActivePath = (path: string) => {
@@ -68,7 +68,7 @@ export default function Sidebar() {
         onClick={logout}
         className="flex items-center px-[25px] py-3 text-sm font-medium cursor-pointer text-white/70 hover:text-white hover:bg-white/5 transition-all duration-200"
       >
-        <SignOut size={20} className="mr-[15px]" />
+        <SignOutIcon size={20} className="mr-[15px]" />
         Sign Out
       </div>
     </aside>

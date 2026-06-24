@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, GraduationCap, Camera, PencilSimple, Quotes, SealCheck } from '@phosphor-icons/react'
+import { MapPinIcon, GraduationCapIcon, CameraIcon, PencilSimpleIcon, QuotesIcon, SealCheckIcon } from '@phosphor-icons/react'
 import DashboardLayout from '../components/layout/DashboardLayout.tsx'
 import { useAuth } from '../context/AuthContext.tsx'
 import { skillApi, endorsementApi } from '../services/api.ts'
@@ -63,7 +63,7 @@ export default function ProfilePage() {
                   onError={imgErrorHandler}
                 />
                 <div className="absolute bottom-[5px] right-[5px] bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center border-2 border-white cursor-pointer">
-                  <Camera size={14} />
+                  <CameraIcon size={14} />
                 </div>
               </div>
               <div>
@@ -72,11 +72,11 @@ export default function ProfilePage() {
                 <div className="flex gap-2.5">
                   {user?.batch_year && (
                     <span className="flex items-center gap-1 bg-[#f3f4f6] px-3 py-1.5 rounded-full text-[0.8rem] text-[#555] font-medium">
-                      <GraduationCap size={14} /> {user.batch_year}
+                      <GraduationCapIcon size={14} /> {user.batch_year}
                     </span>
                   )}
                   <span className="flex items-center gap-1 bg-[#f3f4f6] px-3 py-1.5 rounded-full text-[0.8rem] text-[#555] font-medium">
-                    <MapPin size={14} /> {user?.role === 'recruiter' ? `NIP: ${user?.nim || '—'}` : user?.nim || '—'}
+                    <MapPinIcon size={14} /> {user?.role === 'recruiter' ? `NIP: ${user?.nim || '—'}` : user?.nim || '—'}
                   </span>
                 </div>
               </div>
@@ -85,7 +85,7 @@ export default function ProfilePage() {
               onClick={() => navigate('/profile/edit')}
               className="bg-primary text-white border-none px-6 py-3 rounded-lg text-[0.9rem] font-semibold flex items-center gap-2 cursor-pointer"
             >
-              <PencilSimple size={18} /> Edit Profile
+              <PencilSimpleIcon size={18} /> Edit Profile
             </button>
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function ProfilePage() {
         <div className="bg-white rounded-2xl p-10 w-full mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
           <div className="flex justify-between items-center mb-5">
             <h2 className="text-[1.2rem] font-semibold text-primary">My Bio</h2>
-            <Quotes size={24} className="text-[#cbd5e1]" />
+            <QuotesIcon size={24} className="text-[#cbd5e1]" />
           </div>
           <p className="text-[#555] leading-relaxed text-[0.95rem]">
             {user?.bio || 'No bio yet.'}
@@ -135,7 +135,7 @@ export default function ProfilePage() {
         {user?.role === 'student' && endorsements.length > 0 && (
           <div className="bg-white rounded-2xl p-10 w-full mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
             <div className="flex items-center gap-3 mb-5">
-              <SealCheck size={24} className="text-primary" />
+              <SealCheckIcon size={24} className="text-primary" />
               <h2 className="text-[1.2rem] font-semibold text-primary">My Endorsements</h2>
               <span className="bg-[#a7f3d0] text-[#047857] px-3 py-1 rounded-full text-[0.75rem] font-bold">
                 {endorsements.length}
@@ -152,7 +152,7 @@ export default function ProfilePage() {
                   />
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-1">
-                      <h4 className="text-[0.9rem] font-semibold text-[#111]">{e.from_user_name || `User #${e.from_user_id}`}</h4>
+                      <h4 className="text-[0.9rem] font-semibold text-[#111]">{e.from_user_name || `UserIcon #${e.from_user_id}`}</h4>
                     </div>
                     <p className="text-[0.85rem] text-[#555] leading-relaxed">&ldquo;{e.message}&rdquo;</p>
                   </div>

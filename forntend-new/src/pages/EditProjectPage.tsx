@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Check, Trash } from "@phosphor-icons/react";
+import { ArrowLeftIcon, PlusIcon, CheckIcon, TrashIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { useAuth } from "../context/AuthContext.tsx";
 import { projectApi, userApi } from "../services/api.ts";
@@ -102,7 +102,7 @@ export default function EditProjectPage() {
           onClick={() => navigate(`/projects/${id}`)}
           className="flex items-center gap-1.5 text-primary text-[0.85rem] font-semibold mb-3.5 cursor-pointer"
         >
-          <ArrowLeft size={16} /> Back to My Projects
+          <ArrowLeftIcon size={16} /> Back to My Projects
         </div>
 
         <h1 className="font-heading text-[2.2rem] font-bold text-primary mb-7">
@@ -223,7 +223,7 @@ export default function EditProjectPage() {
                       <div className="w-[32px] h-[32px] rounded-full bg-[#dbeafe] flex items-center justify-center text-[0.75rem] font-bold text-[#111]">
                         {(c.user_name || "U").charAt(0)}
                       </div>
-                      <span className="text-[0.9rem]">{c.user_name || `User #${c.user_id}`}</span>
+                      <span className="text-[0.9rem]">{c.user_name || `UserIcon #${c.user_id}`}</span>
                     </div>
                   </td>
                   <td className="py-3.5 border-b border-[#eaeaea] text-[0.9rem]">{c.role}</td>
@@ -233,7 +233,7 @@ export default function EditProjectPage() {
                       disabled={removingId === c.id}
                       className="bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-[0.8rem] font-semibold flex items-center gap-1.5 cursor-pointer disabled:opacity-50 hover:bg-red-100 transition-colors"
                     >
-                      <Trash size={14} /> {removingId === c.id ? "Removing..." : "Remove"}
+                      <TrashIcon size={14} /> {removingId === c.id ? "Removing..." : "Remove"}
                     </button>
                   </td>
                 </tr>
@@ -243,7 +243,7 @@ export default function EditProjectPage() {
 
           {collabSuccess && (
             <div className="mb-4 p-3 bg-green-50 text-green-700 rounded-lg text-[0.85rem] flex items-center gap-2">
-              <Check size={16} /> {collabSuccess}
+              <CheckIcon size={16} /> {collabSuccess}
             </div>
           )}
           {collabError && (
@@ -251,7 +251,7 @@ export default function EditProjectPage() {
           )}
           <div className="flex gap-5 items-end max-md:flex-col">
             <div className="flex-1">
-              <label className="block text-[0.75rem] font-bold text-[#333] mb-2.5">Student NIM</label>
+              <label className="block text-[0.75rem] font-bold text-[#333] mb-2.5">StudentIcon NIM</label>
               <input
                 type="text"
                 value={newCollabNim}
@@ -290,14 +290,14 @@ export default function EditProjectPage() {
                   setNewCollabRole("");
                   loadContributors();
                 } catch (err: any) {
-                  setCollabError(err?.response?.data?.detail || "Failed to add collaborator. Check NIM.");
+                  setCollabError(err?.response?.data?.detail || "Failed to add collaborator. CheckIcon NIM.");
                 } finally {
                   setAddingCollab(false);
                 }
               }}
               className="bg-primary text-white border-none px-6 py-3.5 rounded-lg font-semibold flex items-center gap-2 h-[47px] cursor-pointer disabled:opacity-50"
             >
-              <Plus size={18} /> {addingCollab ? "Adding..." : "Add Collaborator"}
+              <PlusIcon size={18} /> {addingCollab ? "Adding..." : "Add Collaborator"}
             </button>
           </div>
         </div>

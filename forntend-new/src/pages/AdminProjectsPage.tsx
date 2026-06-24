@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash, ArrowLeft, Eye } from "@phosphor-icons/react";
+import { TrashIcon, ArrowLeftIcon, EyeIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { adminApi } from "../services/api.ts";
 import { PLACEHOLDER_COVER, coverErrorHandler } from "../types/index.ts";
@@ -39,7 +39,7 @@ export default function AdminProjectsPage() {
     <DashboardLayout>
       <div className="max-w-[1100px] mx-auto w-full">
         <div className="flex items-center gap-3 mb-6">
-          <ArrowLeft size={20} className="text-primary cursor-pointer" onClick={() => window.history.back()} />
+          <ArrowLeftIcon size={20} className="text-primary cursor-pointer" onClick={() => window.history.back()} />
           <h1 className="text-[2rem] font-bold text-primary">Manage Projects</h1>
         </div>
 
@@ -64,20 +64,20 @@ export default function AdminProjectsPage() {
                 </div>
                 <div className="p-5 flex-1 flex flex-col">
                   <h3 className="text-[1rem] font-bold text-primary mb-1">{p.title}</h3>
-                  <p className="text-[0.75rem] text-[#888] mb-3">by {p.owner_name || "User"}</p>
+                  <p className="text-[0.75rem] text-[#888] mb-3">by {p.owner_name || "UserIcon"}</p>
                   <p className="text-[0.8rem] text-[#555] leading-relaxed mb-4 flex-1 line-clamp-2">{p.description}</p>
                   <div className="flex gap-2">
                     <button
                       onClick={() => navigate(`/projects/${p.id}`)}
                       className="flex-1 bg-white text-primary border border-primary px-3 py-2 rounded-lg text-[0.75rem] font-semibold flex items-center justify-center gap-1.5 cursor-pointer hover:bg-[#f8fafc]"
                     >
-                      <Eye size={14} /> View
+                      <EyeIcon size={14} /> View
                     </button>
                     <button
                       onClick={() => setDeleteTarget(p)}
                       className="bg-red-50 text-red-600 border border-red-200 px-3 py-2 rounded-lg text-[0.75rem] font-semibold flex items-center gap-1.5 cursor-pointer hover:bg-red-100"
                     >
-                      <Trash size={14} /> Delete
+                      <TrashIcon size={14} /> Delete
                     </button>
                   </div>
                 </div>

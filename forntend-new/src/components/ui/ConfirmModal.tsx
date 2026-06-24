@@ -1,4 +1,4 @@
-import { X } from '@phosphor-icons/react'
+import { XIcon } from '@phosphor-icons/react'
 
 interface ConfirmModalProps {
   isOpen: boolean
@@ -29,7 +29,7 @@ export default function ConfirmModal({
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-[1.3rem] font-bold text-primary">{title}</h2>
           <button onClick={onCancel} className="bg-none border-none text-[#555] text-lg cursor-pointer">
-            <X size={22} />
+            <XIcon size={22} />
           </button>
         </div>
 

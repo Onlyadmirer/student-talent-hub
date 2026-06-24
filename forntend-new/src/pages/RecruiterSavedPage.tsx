@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bookmark, ArrowRight, Trash, ArrowLeft } from "@phosphor-icons/react";
+import { BookmarkIcon, ArrowRightIcon, TrashIcon, ArrowLeftIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { recruiterApi } from "../services/api.ts";
 import { PLACEHOLDER_AVATAR, imgErrorHandler } from "../types/index.ts";
-import type { User } from "../types/index.ts";
+import type { UserIcon } from "../types/index.ts";
 
 export default function RecruiterSavedPage() {
   const navigate = useNavigate();
-  const [students, setStudents] = useState<User[]>([]);
+  const [students, setStudents] = useState<UserIcon[]>([]);
   const [loading, setLoading] = useState(true);
 
   const load = () => {
@@ -31,7 +31,7 @@ export default function RecruiterSavedPage() {
     <DashboardLayout>
       <div className="max-w-[1000px] mx-auto w-full">
         <div className="flex items-center gap-3 mb-6">
-          <ArrowLeft size={20} className="text-primary cursor-pointer" onClick={() => window.history.back()} />
+          <ArrowLeftIcon size={20} className="text-primary cursor-pointer" onClick={() => window.history.back()} />
           <h1 className="text-[2rem] font-bold text-primary">Saved Students</h1>
         </div>
 
@@ -39,7 +39,7 @@ export default function RecruiterSavedPage() {
           <div className="flex justify-center py-20 text-[#888]">Loading...</div>
         ) : students.length === 0 ? (
           <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-[#f0f0f0]">
-            <Bookmark size={40} className="mx-auto mb-4 text-[#ccc]" />
+            <BookmarkIcon size={40} className="mx-auto mb-4 text-[#ccc]" />
             <p className="text-[#888] mb-4">You haven't saved any students yet.</p>
             <button
               onClick={() => navigate("/explore")}
@@ -65,14 +65,14 @@ export default function RecruiterSavedPage() {
                     onClick={() => navigate(`/recruiter/students/${s.id}`)}
                     className="flex-1 bg-primary text-white border-none px-4 py-2.5 rounded-lg text-[0.8rem] font-semibold flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    View Portfolio <ArrowRight size={14} />
+                    View Portfolio <ArrowRightIcon size={14} />
                   </button>
                   <button
                     onClick={() => handleUnsave(s.id)}
                     className="bg-red-50 text-red-600 border border-red-200 px-3 py-2.5 rounded-lg cursor-pointer hover:bg-red-100"
                     title="Remove from saved"
                   >
-                    <Trash size={16} />
+                    <TrashIcon size={16} />
                   </button>
                 </div>
               </div>

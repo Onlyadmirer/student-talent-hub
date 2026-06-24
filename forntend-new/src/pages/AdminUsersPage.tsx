@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { Trash, Prohibit, CheckCircle, ArrowLeft } from "@phosphor-icons/react";
+import { TrashIcon, ProhibitIcon, CheckCircleIcon, ArrowLeftIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { adminApi } from "../services/api.ts";
-import type { User } from "../types/index.ts";
+import type { UserIcon } from "../types/index.ts";
 import ConfirmModal from "../components/ui/ConfirmModal.tsx";
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserIcon[]>([]);
   const [loading, setLoading] = useState(true);
-  const [actionTarget, setActionTarget] = useState<User | null>(null);
+  const [actionTarget, setActionTarget] = useState<UserIcon | null>(null);
   const [actionType, setActionType] = useState<"ban" | "unban" | "delete" | null>(null);
   const [processing, setProcessing] = useState(false);
 
@@ -42,8 +42,8 @@ export default function AdminUsersPage() {
     <DashboardLayout>
       <div className="max-w-[1100px] mx-auto w-full">
         <div className="flex items-center gap-3 mb-6">
-          <ArrowLeft size={20} className="text-primary cursor-pointer" onClick={() => window.history.back()} />
-          <h1 className="text-[2rem] font-bold text-primary">Manage Users</h1>
+          <ArrowLeftIcon size={20} className="text-primary cursor-pointer" onClick={() => window.history.back()} />
+          <h1 className="text-[2rem] font-bold text-primary">Manage UsersIcon</h1>
         </div>
 
         {loading ? (
@@ -102,21 +102,21 @@ export default function AdminUsersPage() {
                               onClick={() => { setActionTarget(u); setActionType("ban"); }}
                               className="bg-amber-50 text-amber-700 border-none px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold flex items-center gap-1 cursor-pointer hover:bg-amber-100"
                             >
-                              <Prohibit size={12} /> Ban
+                              <ProhibitIcon size={12} /> Ban
                             </button>
                           ) : (
                             <button
                               onClick={() => { setActionTarget(u); setActionType("unban"); }}
                               className="bg-green-50 text-green-700 border-none px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold flex items-center gap-1 cursor-pointer hover:bg-green-100"
                             >
-                              <CheckCircle size={12} /> Unban
+                              <CheckCircleIcon size={12} /> Unban
                             </button>
                           )}
                           <button
                             onClick={() => { setActionTarget(u); setActionType("delete"); }}
                             className="bg-red-50 text-red-600 border-none px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold flex items-center gap-1 cursor-pointer hover:bg-red-100"
                           >
-                            <Trash size={12} /> Delete
+                            <TrashIcon size={12} /> Delete
                           </button>
                         </div>
                       </td>
@@ -132,7 +132,7 @@ export default function AdminUsersPage() {
 
       <ConfirmModal
         isOpen={!!actionTarget}
-        title={`${confirmLabel} User`}
+        title={`${confirmLabel} UserIcon`}
         message={`Are you sure you want to ${actionType === "delete" ? "permanently delete" : actionType === "ban" ? "ban" : "unban"} "${actionTarget?.name}"?${actionType === "delete" ? " This will remove all their projects, skills, endorsements, and collaboration requests." : ""}`}
         confirmLabel={confirmLabel}
         cancelLabel="Cancel"

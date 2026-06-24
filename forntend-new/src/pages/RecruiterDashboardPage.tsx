@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bookmark, SealCheck, Users, ArrowRight, MagnifyingGlass } from "@phosphor-icons/react";
+import { BookmarkIcon, SealCheckIcon, UsersIcon, ArrowRightIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { recruiterApi } from "../services/api.ts";
 import { imgErrorHandler } from "../types/index.ts";
@@ -19,9 +19,9 @@ export default function RecruiterDashboardPage() {
   if (loading) return <DashboardLayout><div className="flex justify-center py-20 text-[#888]">Loading...</div></DashboardLayout>;
 
   const cards = [
-    { label: "Total Students", value: data?.total_students ?? 0, icon: Users, color: "bg-blue-50 text-blue-600" },
-    { label: "Saved Students", value: data?.total_saved ?? 0, icon: Bookmark, color: "bg-amber-50 text-amber-600" },
-    { label: "Endorsements Given", value: data?.total_endorsements_given ?? 0, icon: SealCheck, color: "bg-green-50 text-green-600" },
+    { label: "Total Students", value: data?.total_students ?? 0, icon: UsersIcon, color: "bg-blue-50 text-blue-600" },
+    { label: "Saved Students", value: data?.total_saved ?? 0, icon: BookmarkIcon, color: "bg-amber-50 text-amber-600" },
+    { label: "Endorsements Given", value: data?.total_endorsements_given ?? 0, icon: SealCheckIcon, color: "bg-green-50 text-green-600" },
   ];
 
   return (
@@ -50,13 +50,13 @@ export default function RecruiterDashboardPage() {
                 onClick={() => navigate("/explore")}
                 className="w-full flex items-center gap-3 p-4 border border-[#eaeaea] rounded-xl text-[0.9rem] font-semibold text-left hover:bg-[#f8fafc] cursor-pointer"
               >
-                <MagnifyingGlass size={20} className="text-primary" /> Explore Students
+                <MagnifyingGlassIcon size={20} className="text-primary" /> Explore Students
               </button>
               <button
                 onClick={() => navigate("/recruiter/saved")}
                 className="w-full flex items-center gap-3 p-4 border border-[#eaeaea] rounded-xl text-[0.9rem] font-semibold text-left hover:bg-[#f8fafc] cursor-pointer"
               >
-                <Bookmark size={20} className="text-primary" /> View Saved Students
+                <BookmarkIcon size={20} className="text-primary" /> View Saved Students
               </button>
             </div>
           </div>
@@ -81,7 +81,7 @@ export default function RecruiterDashboardPage() {
                       <p className="text-[0.85rem] font-semibold text-[#111]">{s.name}</p>
                       <p className="text-[0.7rem] text-[#888]">{s.major || "—"}</p>
                     </div>
-                    <ArrowRight size={16} className="text-[#888]" />
+                    <ArrowRightIcon size={16} className="text-[#888]" />
                   </div>
                 ))}
               </div>

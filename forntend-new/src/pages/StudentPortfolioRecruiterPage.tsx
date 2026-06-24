@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Bookmark } from "@phosphor-icons/react";
+import { ArrowLeftIcon, BookmarkIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { userApi, projectApi, skillApi, recruiterApi } from "../services/api.ts";
 import { PLACEHOLDER_AVATAR, PLACEHOLDER_COVER, coverErrorHandler, imgErrorHandler } from "../types/index.ts";
-import type { User, UserSkillBrief } from "../types/index.ts";
+import type { UserIcon, UserSkillBrief } from "../types/index.ts";
 
 export default function StudentPortfolioRecruiterPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [student, setStudent] = useState<User | null>(null);
+  const [student, setStudent] = useState<UserIcon | null>(null);
   const [skills, setSkills] = useState<UserSkillBrief[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
   const [isSaved, setIsSaved] = useState(false);
@@ -34,7 +34,7 @@ export default function StudentPortfolioRecruiterPage() {
     }).catch(() => {});
 
     recruiterApi.getSavedStudents().then((res) => {
-      setIsSaved(res.data.some((s: User) => s.id === userId));
+      setIsSaved(res.data.some((s: UserIcon) => s.id === userId));
     }).catch(() => {});
   }, [id, navigate]);
 
@@ -66,7 +66,7 @@ export default function StudentPortfolioRecruiterPage() {
           onClick={() => navigate("/explore")}
           className="flex items-center gap-1.5 text-primary text-[0.85rem] font-semibold mb-6 cursor-pointer"
         >
-          <ArrowLeft size={16} /> Back to Explore
+          <ArrowLeftIcon size={16} /> Back to Explore
         </div>
 
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-[#f0f0f0] flex flex-col items-center text-center mb-8">
@@ -84,8 +84,8 @@ export default function StudentPortfolioRecruiterPage() {
               isSaved ? "bg-amber-50 text-amber-700" : "bg-primary text-white"
             }`}
           >
-            <Bookmark size={18} weight={isSaved ? "fill" : "regular"} />
-            {isSaved ? "Saved" : "Save Student"}
+            <BookmarkIcon size={18} weight={isSaved ? "fill" : "regular"} />
+            {isSaved ? "Saved" : "Save StudentIcon"}
           </button>
           {student.bio && (
             <p className="text-[0.85rem] text-[#555] max-w-[500px] leading-relaxed">{student.bio}</p>

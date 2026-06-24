@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { DotsThreeVertical } from "@phosphor-icons/react";
+import { DotsThreeVerticalIcon } from "@phosphor-icons/react";
 
 interface CollabCardProps {
   id: number;

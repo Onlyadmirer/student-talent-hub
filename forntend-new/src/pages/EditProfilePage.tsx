@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, X } from '@phosphor-icons/react'
+import { ArrowLeftIcon, XIcon } from '@phosphor-icons/react'
 import DashboardLayout from '../components/layout/DashboardLayout.tsx'
 import { useAuth } from '../context/AuthContext.tsx'
 import { userApi, skillApi } from '../services/api.ts'
@@ -80,7 +80,7 @@ export default function EditProfilePage() {
           onClick={() => navigate('/profile')}
           className="flex items-center gap-2 text-primary text-[0.9rem] font-semibold mb-5 cursor-pointer"
         >
-          <ArrowLeft size={18} /> Back to My Profile
+          <ArrowLeftIcon size={18} /> Back to My Profile
         </div>
 
         <h1 className="text-[2rem] font-bold text-primary mb-1">Edit Profile</h1>
@@ -119,7 +119,7 @@ export default function EditProfilePage() {
               />
             </div>
             <div className="flex-1">
-              <label className="block text-[0.75rem] font-bold text-[#555] uppercase tracking-wide mb-2">{user?.role === 'recruiter' ? 'NIP' : 'NIM / Student ID'}</label>
+              <label className="block text-[0.75rem] font-bold text-[#555] uppercase tracking-wide mb-2">{user?.role === 'recruiter' ? 'NIP' : 'NIM / StudentIcon ID'}</label>
               <input
                 type="text"
                 value={nim}
@@ -160,7 +160,7 @@ export default function EditProfilePage() {
                     onClick={() => handleDeleteSkill(s.id)}
                     className="bg-none border-none text-primary/60 hover:text-primary cursor-pointer p-0 flex items-center"
                   >
-                    <X size={14} weight="bold" />
+                    <XIcon size={14} weight="bold" />
                   </button>
                 </span>
               ))}

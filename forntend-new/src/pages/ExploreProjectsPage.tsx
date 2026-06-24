@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bookmark } from "@phosphor-icons/react";
+import { BookmarkIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { projectApi, userApi, skillApi, recruiterApi } from "../services/api.ts";
 import { PLACEHOLDER_COVER, PLACEHOLDER_AVATAR, coverErrorHandler, imgErrorHandler } from "../types/index.ts";
-import type { Project, User, SkillCategory, UserSkillBrief } from "../types/index.ts";
+import type { Project, UserIcon, SkillCategory, UserSkillBrief } from "../types/index.ts";
 import { useAuth } from "../context/AuthContext.tsx";
 
 export default function ExploreProjectsPage() {
@@ -12,7 +12,7 @@ export default function ExploreProjectsPage() {
   const { user } = useAuth();
   const [mode, setMode] = useState<"projects" | "students">("projects");
   const [projects, setProjects] = useState<Project[]>([]);
-  const [students, setStudents] = useState<User[]>([]);
+  const [students, setStudents] = useState<UserIcon[]>([]);
   const [skillsByUser, setSkillsByUser] = useState<Record<number, UserSkillBrief[]>>({});
   const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
@@ -30,7 +30,7 @@ export default function ExploreProjectsPage() {
     if (level) params.proficiency_level = level;
     try {
       const res = isRecruiter ? await recruiterApi.getStudents(params) : await userApi.getAll(params);
-      const users: User[] = res.data;
+      const users: UserIcon[] = res.data;
       setStudents(users);
       if (isRecruiter) {
         setSavedIds(new Set(users.filter((u: any) => u.is_saved).map((u: any) => u.id)));
@@ -83,7 +83,7 @@ export default function ExploreProjectsPage() {
         <div className="flex justify-between items-start mb-7">
           <div>
             <h1 className="text-[2.2rem] font-bold text-primary mb-2">
-              {mode === "projects" ? "Find Your Next Venture" : "Search Top Student Talent"}
+              {mode === "projects" ? "Find Your Next Venture" : "Search Top StudentIcon Talent"}
             </h1>
             <p className="text-[#555] text-[0.95rem] max-w-[500px]">
               {mode === "projects"
@@ -137,7 +137,7 @@ export default function ExploreProjectsPage() {
                     <div className="flex items-center gap-2.5">
                       <img src={PLACEHOLDER_AVATAR} className="w-[30px] h-[30px] rounded-full object-cover" alt="" />
                       <div>
-                        <h4 className="text-[0.8rem] font-semibold text-[#111]">{p.owner_name || "User"}</h4>
+                        <h4 className="text-[0.8rem] font-semibold text-[#111]">{p.owner_name || "UserIcon"}</h4>
                       </div>
                     </div>
                   </div>
@@ -244,7 +244,7 @@ export default function ExploreProjectsPage() {
                             : "bg-primary text-white"
                         }`}
                       >
-                        <Bookmark size={16} weight={savedIds.has(s.id) ? "fill" : "regular"} />
+                        <BookmarkIcon size={16} weight={savedIds.has(s.id) ? "fill" : "regular"} />
                         {savedIds.has(s.id) ? "Saved" : "Save"}
                       </button>
                     )}

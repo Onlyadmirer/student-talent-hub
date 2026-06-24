@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, PencilSimple, Trash, UserPlus, Code, Palette, Star, Handshake, Check, X, PaperPlaneRight, Clock } from "@phosphor-icons/react";
+import { ArrowLeftIcon, PencilSimpleIcon, TrashIcon, UserPlusIcon, CodeIcon, PaletteIcon, StarIcon, HandshakeIcon, CheckIcon, XIcon, PaperPlaneRightIcon, ClockIcon } from "@phosphor-icons/react";
 import DashboardLayout from "../components/layout/DashboardLayout.tsx";
 import { useAuth } from "../context/AuthContext.tsx";
 import { projectApi, requestApi } from "../services/api.ts";
@@ -49,7 +49,7 @@ export default function ProjectDetailPage() {
   const isOwner = user?.id === project.owner_id;
   const isContributor = user ? (project.contributors || []).some((c: any) => c.user_id === user.id) : false;
   const techStack = project.tech_stack ? project.tech_stack.split(",").map((t: string) => t.trim()) : [];
-  const ownerName = project.owner_name || user?.name || "User";
+  const ownerName = project.owner_name || user?.name || "UserIcon";
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -112,7 +112,7 @@ export default function ProjectDetailPage() {
           onClick={() => navigate(isOwner ? "/projects" : "/explore")}
           className="flex items-center gap-1.5 text-primary text-[0.85rem] font-semibold mb-3.5 cursor-pointer"
         >
-          <ArrowLeft size={16} /> Back to {isOwner ? "My Projects" : "Explore"}
+          <ArrowLeftIcon size={16} /> Back to {isOwner ? "My Projects" : "Explore"}
         </div>
 
         <div className="flex justify-between items-end mb-6">
@@ -142,34 +142,34 @@ export default function ProjectDetailPage() {
                 onClick={() => setShowDeleteModal(true)}
                 className="bg-white text-red-600 border border-red-300 px-6 py-3 rounded-lg font-semibold flex items-center gap-2 cursor-pointer hover:bg-red-50 transition-colors"
               >
-                <Trash size={18} /> Delete
+                <TrashIcon size={18} /> Delete
               </button>
               <button
                 onClick={() => navigate(`/projects/${id}/edit`)}
                 className="bg-primary text-white border-none px-6 py-3 rounded-lg font-semibold flex items-center gap-2 cursor-pointer"
               >
-                <PencilSimple size={18} /> Edit Project
+                <PencilSimpleIcon size={18} /> Edit Project
               </button>
             </div>
           ) : (
             <div className="flex gap-3">
               {myRequest ? (
                 <div className="flex items-center gap-2 px-5 py-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-[0.85rem] font-semibold">
-                  <Clock size={18} /> Request Pending ({myRequest.role})
+                  <ClockIcon size={18} /> Request Pending ({myRequest.role})
                 </div>
               ) : user?.role === "student" && project.is_open && !isContributor ? (
                 <button
                   onClick={() => setShowRequestModal(true)}
                   className="bg-primary text-white border-none px-6 py-3 rounded-lg font-semibold flex items-center gap-2 cursor-pointer"
                 >
-                  <Handshake size={18} /> Request to Collaborate
+                  <HandshakeIcon size={18} /> Request to Collaborate
                 </button>
               ) : null}
               <button
                 onClick={() => navigate(`/students/${project.owner_id}`)}
                 className="bg-white text-primary border border-primary px-6 py-3 rounded-lg font-semibold flex items-center gap-2 cursor-pointer"
               >
-                <UserPlus size={18} /> Contact Owner
+                <UserPlusIcon size={18} /> Contact Owner
               </button>
             </div>
           )}
@@ -198,7 +198,7 @@ export default function ProjectDetailPage() {
                 showRequestsTab ? "bg-primary text-white" : "bg-white text-[#555] border border-[#eaeaea]"
               }`}
             >
-              <Handshake size={16} /> Requests ({incomingRequests.filter((r) => r.status === "pending").length})
+              <HandshakeIcon size={16} /> Requests ({incomingRequests.filter((r) => r.status === "pending").length})
             </div>
           )}
         </div>
@@ -240,14 +240,14 @@ export default function ProjectDetailPage() {
                           disabled={processingReqId === req.id}
                           className="bg-green-600 text-white border-none px-4 py-2 rounded-lg text-[0.8rem] font-semibold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
-                          <Check size={14} /> Accept
+                          <CheckIcon size={14} /> Accept
                         </button>
                         <button
                           onClick={() => handleRequestAction(req.id, "rejected")}
                           disabled={processingReqId === req.id}
                           className="bg-red-500 text-white border-none px-4 py-2 rounded-lg text-[0.8rem] font-semibold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
-                          <X size={14} /> Reject
+                          <XIcon size={14} /> Reject
                         </button>
                       </div>
                     )}
@@ -289,7 +289,7 @@ export default function ProjectDetailPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-3.5 p-3.5 border border-[#eaeaea] rounded-lg text-[0.85rem] font-semibold text-[#333] mb-2.5 bg-white hover:bg-[#f8fafc] no-underline"
                   >
-                    <Code size={20} className="text-primary" /> View GitHub
+                    <CodeIcon size={20} className="text-primary" /> View GitHub
                   </a>
                 )}
                 {project.figma_link && (
@@ -299,14 +299,14 @@ export default function ProjectDetailPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-3.5 p-3.5 border border-[#eaeaea] rounded-lg text-[0.85rem] font-semibold text-[#333] mb-2.5 bg-white hover:bg-[#f8fafc] no-underline"
                   >
-                    <Palette size={20} className="text-primary" /> View Figma
+                    <PaletteIcon size={20} className="text-primary" /> View Figma
                   </a>
                 )}
                 <div
                   onClick={() => navigate(`/projects/${id}/endorsements`)}
                   className="flex items-center gap-3.5 p-3.5 border border-[#eaeaea] rounded-lg text-[0.85rem] font-semibold text-[#333] bg-white hover:bg-[#f8fafc] cursor-pointer"
                 >
-                  <Star size={20} className="text-primary" /> View Endorsements
+                  <StarIcon size={20} className="text-primary" /> View Endorsements
                 </div>
                 {!project.github_link && !project.demo_link && (
                   <p className="text-[#888] text-sm">No links added yet.</p>
@@ -336,7 +336,7 @@ export default function ProjectDetailPage() {
                       onError={imgErrorHandler}
                     />
                     <div>
-                      <h4 className="text-[0.9rem] font-semibold text-[#111]">{c.user_name || `User #${c.user_id}`}</h4>
+                      <h4 className="text-[0.9rem] font-semibold text-[#111]">{c.user_name || `UserIcon #${c.user_id}`}</h4>
                       <p className="text-[0.75rem] text-[#666]">{c.role}</p>
                     </div>
                   </div>
@@ -382,7 +382,7 @@ export default function ProjectDetailPage() {
                   disabled={!reqRole || sendingReq}
                   className="bg-primary text-white border-none px-6 py-3 rounded-lg font-semibold flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
-                  <PaperPlaneRight size={16} /> {sendingReq ? "Sending..." : "Send Request"}
+                  <PaperPlaneRightIcon size={16} /> {sendingReq ? "Sending..." : "Send Request"}
                 </button>
               </div>
             </div>
